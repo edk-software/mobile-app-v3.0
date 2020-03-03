@@ -1,3 +1,15 @@
+import 'dart:convert';
+
+class MeditationsResponse {
+  List<Meditation> meditations;
+
+  MeditationsResponse({this.meditations});
+
+  MeditationsResponse.fromJson(Map<String, dynamic> json) {
+    meditations = jsonDecode(json.toString());
+  }
+}
+
 class Meditation {
   String id;
   String year;
