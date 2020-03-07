@@ -5,7 +5,7 @@ class RoutesResponse {
   int areasCount;
   int groupsCount;
   int countysCount;
-  List<RoutesData> data;
+  List<Group> data;
 
   RoutesResponse(
       {this.yearId,
@@ -24,9 +24,9 @@ class RoutesResponse {
     groupsCount = json['groupsCount'];
     countysCount = json['countysCount'];
     if (json['data'] != null) {
-      data = new List<RoutesData>();
+      data = new List<Group>();
       json['data'].forEach((v) {
-        data.add(new RoutesData.fromJson(v));
+        data.add(new Group.fromJson(v));
       });
     }
   }
@@ -46,14 +46,14 @@ class RoutesResponse {
   }
 }
 
-class RoutesData {
+class Group {
   int groupId;
   String groupName;
   List<Area> areas;
 
-  RoutesData({this.groupId, this.groupName, this.areas});
+  Group({this.groupId, this.groupName, this.areas});
 
-  RoutesData.fromJson(Map<String, dynamic> json) {
+  Group.fromJson(Map<String, dynamic> json) {
     groupId = json['groupId'];
     groupName = json['groupName'];
     if (json['areas'] != null) {
