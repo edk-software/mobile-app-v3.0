@@ -6,6 +6,8 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'db_tables/meditation.dart';
+import 'db_tables/route.dart';
+import 'db_tables/station.dart';
 
 part 'db_provider.g.dart';
 
@@ -17,7 +19,14 @@ LazyDatabase _openConnection() {
   });
 }
 
-@UseMoor(tables: [MeditationDb, MeditationLanguageVersionDb])
+@UseMoor(tables: [
+  MeditationDb,
+  MeditationLanguageVersionDb,
+  GroupDb,
+  AreaDb,
+  RouteDb,
+  StationDb
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 

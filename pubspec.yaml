@@ -34,6 +34,7 @@ dependencies:
   moor_ffi: ^0.4.0
   path_provider: ^1.6.5
   path: ^1.6.4
+  shared_preferences: ^0.5.6+2
 
 dev_dependencies:
   flutter_test:
