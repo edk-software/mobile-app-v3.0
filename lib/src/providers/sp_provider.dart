@@ -1,3 +1,4 @@
+import 'package:edk_mobile_v3/src/models/edition_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesProvider {
@@ -19,6 +20,18 @@ class SharedPreferencesProvider {
 
   init() async {
     _prefs = await SharedPreferences.getInstance();
+  }
+
+  setEditionState(EditionState state) {
+    setCurrentEditionYear(state.currentYearId);
+    setRoutesLastUpdate(state.routesLastUpdate);
+    setRoutesCount(state.routesCount);
+    setAreasCount(state.areasCount);
+    setGroupsCount(state.groupsCount);
+    setCountysCount(state.countysCount);
+    setCurrentMeditationsParentId(state.currentMeditationsParentId);
+    setCurrentMeditationsName(state.currentMeditationsName);
+    setMeditationsLastUpdate(state.meditationsLastUpdate);
   }
 
   setCurrentEditionYear(String year) {

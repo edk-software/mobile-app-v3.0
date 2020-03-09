@@ -27,8 +27,8 @@ LazyDatabase _openConnection() {
   RouteDb,
   StationDb
 ])
-class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+class DatabaseProvider extends _$DatabaseProvider {
+  DatabaseProvider() : super(_openConnection());
 
   @override
   int get schemaVersion => 1;

@@ -2017,8 +2017,8 @@ class $StationDbTable extends StationDb
   }
 }
 
-abstract class _$AppDatabase extends GeneratedDatabase {
-  _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
+abstract class _$DatabaseProvider extends GeneratedDatabase {
+  _$DatabaseProvider(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $MeditationDbTable _meditationDb;
   $MeditationDbTable get meditationDb =>
       _meditationDb ??= $MeditationDbTable(this);
