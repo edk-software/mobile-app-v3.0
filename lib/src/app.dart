@@ -62,24 +62,30 @@ class HomeState extends State<Home> {
           });
         },
         items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.info),
-            title: Text(EDKLocalizations.of(context).edk),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            title: Text(EDKLocalizations.of(context).routes),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.playlist_play),
-            title: Text(EDKLocalizations.of(context).meditations),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.monetization_on),
-            title: Text(EDKLocalizations.of(context).support),
-          ),
+          bottomNavigationBarItem(
+              0, "assets/images/edk.png", EDKLocalizations.of(context).edk),
+          bottomNavigationBarItem(
+              1, "assets/images/map.png", EDKLocalizations.of(context).routes),
+          bottomNavigationBarItem(2, "assets/images/music_list.png",
+              EDKLocalizations.of(context).meditations),
+          bottomNavigationBarItem(3, "assets/images/support.png",
+              EDKLocalizations.of(context).support),
         ],
       ),
+    );
+  }
+
+  BottomNavigationBarItem bottomNavigationBarItem(
+      int index, String imagePath, String text) {
+    return BottomNavigationBarItem(
+      icon: Image.asset(
+        imagePath,
+        color: _currentIndex == index
+            ? AppTheme.bottomNavigationBarSelectedColor
+            : AppTheme.bottomNavigationBarUnselectedColor,
+        colorBlendMode: BlendMode.srcIn,
+      ),
+      title: Text(text),
     );
   }
 }
