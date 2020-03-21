@@ -1,13 +1,13 @@
 class EditionState {
-  String currentYearId;
-  String routesLastUpdate;
+  int currentYearId;
+  int routesLastUpdate;
   int routesCount;
   int areasCount;
   int groupsCount;
-  int countysCount;
-  String currentMeditationsParentId;
+  String countysCount;
+  int currentMeditationsParentId;
   String currentMeditationsName;
-  String meditationsLastUpdate;
+  int meditationsLastUpdate;
 
   EditionState(
       {this.currentYearId,

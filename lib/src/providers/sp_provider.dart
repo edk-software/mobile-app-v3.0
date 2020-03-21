@@ -34,20 +34,20 @@ class SharedPreferencesProvider {
     setMeditationsLastUpdate(state.meditationsLastUpdate);
   }
 
-  setCurrentEditionYear(String year) {
-    _prefs.setString(_currentYearId, year);
+  setCurrentEditionYear(int year) {
+    _prefs.setInt(_currentYearId, year);
   }
 
-  String getCurrentEditionYear() {
-    return _prefs.getString(_currentYearId);
+  int getCurrentEditionYear() {
+    return _prefs.getInt(_currentYearId);
   }
 
-  setRoutesLastUpdate(String lastUpdate) {
-    _prefs.setString(_routesLastUpdate, lastUpdate);
+  setRoutesLastUpdate(int lastUpdate) {
+    _prefs.setInt(_routesLastUpdate, lastUpdate);
   }
 
-  String getRoutesLastUpdate() {
-    return _prefs.getString(_routesLastUpdate);
+  int getRoutesLastUpdate() {
+    return _prefs.getInt(_routesLastUpdate);
   }
 
   setRoutesCount(int count) {
@@ -74,20 +74,20 @@ class SharedPreferencesProvider {
     return _prefs.getInt(_groupsCount);
   }
 
-  setCountysCount(int count) {
-    _prefs.setInt(_countysCount, count);
+  setCountysCount(String count) {
+    _prefs.setString(_countysCount, count);
   }
 
-  int getCountysCount() {
-    return _prefs.getInt(_countysCount);
+  String getCountysCount() {
+    return _prefs.getString(_countysCount);
   }
 
-  setCurrentMeditationsParentId(String parentId) {
-    _prefs.setString(_currentMeditationsParentId, parentId);
+  setCurrentMeditationsParentId(int parentId) {
+    _prefs.setInt(_currentMeditationsParentId, parentId);
   }
 
-  String getCurrentMeditationsParentId() {
-    return _prefs.getString(_currentMeditationsParentId);
+  int getCurrentMeditationsParentId() {
+    return _prefs.getInt(_currentMeditationsParentId);
   }
 
   setCurrentMeditationsName(String name) {
@@ -98,11 +98,11 @@ class SharedPreferencesProvider {
     return _prefs.getString(_currentMeditationsName);
   }
 
-  setMeditationsLastUpdate(String lastUpdate) {
-    _prefs.setString(_meditationsLastUpdate, lastUpdate);
+  setMeditationsLastUpdate(int lastUpdate) {
+    _prefs.setInt(_meditationsLastUpdate, lastUpdate);
   }
 
-  String getMeditationsLastUpdate() {
-    return _prefs.getString(_meditationsLastUpdate);
+  int getMeditationsLastUpdate() {
+    return _prefs.getInt(_meditationsLastUpdate);
   }
 }

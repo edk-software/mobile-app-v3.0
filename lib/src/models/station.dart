@@ -1,5 +1,7 @@
+import 'package:edk_mobile_v3/src/providers/db_provider.dart';
+
 class StationsResponse {
-  String meditationId;
+  int meditationId;
   List<Station> stations;
 
   StationsResponse({this.meditationId, this.stations});
@@ -26,13 +28,14 @@ class StationsResponse {
 
 class Station {
   String title;
-  String id;
+  int id;
   String author;
   String authorBio;
-  String stationId;
+  int stationId;
   String placeId;
   String audioFileUrl;
-  String text;
+  String stationText;
+  int meditationId;
 
   Station(
       {this.title,
@@ -42,7 +45,7 @@ class Station {
       this.stationId,
       this.placeId,
       this.audioFileUrl,
-      this.text});
+      this.stationText});
 
   Station.fromJson(Map<String, dynamic> json) {
     title = json['title'];
@@ -52,7 +55,33 @@ class Station {
     stationId = json['stationId'];
     placeId = json['placeId'];
     audioFileUrl = json['audioFileUrl'];
-    text = json['text'];
+    stationText = json['text'];
+  }
+
+  Station.fromDbObject(StationDbData stationDb) {
+    this.title = stationDb.title.toString();
+    this.id = stationDb.id.toString() as int;
+    this.author = stationDb.author.toString();
+    this.authorBio = stationDb.authorBio.toString();
+    this.stationId = stationDb.stationId.toString() as int;
+    this.placeId = stationDb.placeId.toString();
+    this.audioFileUrl = stationDb.audioFileUrl.toString();
+    this.stationText = stationDb.stationText.toString();
+    this.meditationId = stationDb.toString() as int;
+  }
+
+  StationDbData toDbObject(int meditationId) {
+    return StationDbData(
+      audioFileUrl: this.audioFileUrl,
+      author: this.author,
+      authorBio: this.authorBio,
+      id: this.id,
+      placeId: this.placeId,
+      stationId: this.stationId,
+      stationText: this.stationText,
+      title: this.title,
+      meditationId: meditationId,
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -64,7 +93,7 @@ class Station {
     data['stationId'] = this.stationId;
     data['placeId'] = this.placeId;
     data['audioFileUrl'] = this.audioFileUrl;
-    data['text'] = this.text;
+    data['text'] = this.stationText;
     return data;
   }
 }

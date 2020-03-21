@@ -1,23 +1,23 @@
 import 'package:moor/moor.dart';
 
 class MeditationDb extends Table {
-  TextColumn get id => text()();
-  TextColumn get year => text()();
-  TextColumn get type => text()();
+  IntColumn get id => integer()();
+  IntColumn get year => integer().nullable()();
+  TextColumn get type => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
 }
 
 class MeditationLanguageVersionDb extends Table {
-  TextColumn get languageName => text()();
-  TextColumn get languageCode => text()();
-  TextColumn get title => text()();
-  TextColumn get id => text()();
-  TextColumn get author => text()();
-  TextColumn get authorBio => text()();
+  TextColumn get languageName => text().nullable()();
+  TextColumn get languageCode => text().nullable()();
+  TextColumn get title => text().nullable()();
+  IntColumn get id => integer()();
+  TextColumn get author => text().nullable()();
+  TextColumn get authorBio => text().nullable()();
 
-  TextColumn get meditationId => text()();
+  IntColumn get meditationId => integer()();
 
   @override
   Set<Column> get primaryKey => {id};

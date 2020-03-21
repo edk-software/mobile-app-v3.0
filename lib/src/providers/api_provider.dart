@@ -6,41 +6,59 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiProvider {
-  final _baseUrl = "http://mobileapi.edk.org.pl/mobile/";
+  final _baseUrl = "https://mobileapi.edk.org.pl/mobile/";
 
   Future<EditionState> fetchEditionState() async {
     final response = await http.get("$_baseUrl/verificationData");
-    final parsedJson = json.decode(response.body);
-
-    return EditionState.fromJson(parsedJson);
+    try {
+      final parsedJson = json.decode(response.body);
+      return EditionState.fromJson(parsedJson[0]);
+    } catch (_) {
+      return null;
+    }
   }
 
-  Future<MeditationsResponse> fetchMeditationsList() async {
+  Future<List<Meditation>> fetchMeditationsList() async {
     final response = await http.get("$_baseUrl/meditationList");
-    final parsedJson = json.decode(response.body);
-
-    return MeditationsResponse.fromJson(parsedJson);
+    try {
+      final parsedJson = json.decode(response.body);
+      List<Meditation> meditations = parsedJson
+          .map<Meditation>((json) => Meditation.fromJson(json))
+          .toList();
+      return meditations;
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<StationsResponse> fetchMeditationById(int id) async {
     final response =
         await http.get("$_baseUrl/meditationById?meditationId=$id");
-    final parsedJson = json.decode(response.body);
-
-    return StationsResponse.fromJson(parsedJson);
+    try {
+      final parsedJson = json.decode(response.body);
+      return StationsResponse.fromJson(parsedJson[0]);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<RoutesResponse> fetchStations() async {
     final response = await http.get("$_baseUrl/allGeneralInfo");
-    final parsedJson = json.decode(response.body);
-
-    return RoutesResponse.fromJson(parsedJson);
+    try {
+      final parsedJson = json.decode(response.body);
+      return RoutesResponse.fromJson(parsedJson);
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<UserRoutesResponse> fetchRoutePoints(int routeId) async {
     final response = await http.get("$_baseUrl/routePoints?id=$routeId");
-    final parsedJson = json.decode(response.body);
-
-    return UserRoutesResponse.fromJson(parsedJson);
+    try {
+      final parsedJson = json.decode(response.body);
+      return UserRoutesResponse.fromJson(parsedJson);
+    } catch (_) {
+      return null;
+    }
   }
 }

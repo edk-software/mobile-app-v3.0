@@ -1,18 +1,8 @@
-import 'dart:convert';
-
-class MeditationsResponse {
-  List<Meditation> meditations;
-
-  MeditationsResponse({this.meditations});
-
-  MeditationsResponse.fromJson(Map<String, dynamic> json) {
-    meditations = jsonDecode(json.toString());
-  }
-}
+import 'package:edk_mobile_v3/src/providers/db_provider.dart';
 
 class Meditation {
-  String id;
-  String year;
+  int id;
+  int year;
   String type;
   List<MeditationLanguageVersion> meditationLanguageVersions;
 
@@ -42,13 +32,22 @@ class Meditation {
     }
     return data;
   }
+
+  MeditationDbData toDbObject() {
+    var dbObject = MeditationDbData(
+      id: this.id,
+      type: this.type,
+      year: this.year,
+    );
+    return dbObject;
+  }
 }
 
 class MeditationLanguageVersion {
   String languageName;
   String languageCode;
   String title;
-  String id;
+  int id;
   String author;
   String authorBio;
 
@@ -78,5 +77,18 @@ class MeditationLanguageVersion {
     data['author'] = this.author;
     data['authorBio'] = this.authorBio;
     return data;
+  }
+
+  MeditationLanguageVersionDbData toDbObject(int meditationId) {
+    var dbObject = MeditationLanguageVersionDbData(
+      author: this.author,
+      authorBio: this.authorBio,
+      id: this.id,
+      languageCode: this.languageCode,
+      languageName: this.languageName,
+      title: this.title,
+      meditationId: meditationId,
+    );
+    return dbObject;
   }
 }

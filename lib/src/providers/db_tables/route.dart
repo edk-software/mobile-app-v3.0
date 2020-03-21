@@ -2,7 +2,7 @@ import 'package:moor/moor.dart';
 
 class GroupDb extends Table {
   IntColumn get groupId => integer()();
-  TextColumn get groupName => text()();
+  TextColumn get groupName => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {groupId};
@@ -10,7 +10,7 @@ class GroupDb extends Table {
 
 class AreaDb extends Table {
   IntColumn get areaId => integer()();
-  TextColumn get groupName => text()();
+  TextColumn get areaName => text().nullable()();
 
   IntColumn get groupId => integer()();
 
@@ -21,15 +21,15 @@ class AreaDb extends Table {
 class RouteDb extends Table {
   IntColumn get routeId => integer()();
 
-  TextColumn get routeName => text()();
-  TextColumn get routeFrom => text()();
-  TextColumn get routeTo => text()();
-  TextColumn get routeLenght => text()();
-  TextColumn get routeAcent => text()();
-  TextColumn get routeKmlFile => text()();
-  TextColumn get routeDescriptionFile => text()();
-  TextColumn get routeDescription => text()();
-  TextColumn get routeLastUpdate => text()();
+  TextColumn get routeName => text().nullable()();
+  TextColumn get routeFrom => text().nullable()();
+  TextColumn get routeTo => text().nullable()();
+  TextColumn get routeLenght => text().nullable()();
+  TextColumn get routeAcent => text().nullable()();
+  TextColumn get routeKmlFile => text().nullable()();
+  TextColumn get routeDescriptionFile => text().nullable()();
+  TextColumn get routeDescription => text().nullable()();
+  TextColumn get routeLastUpdate => text().nullable()();
 
   IntColumn get areaId => integer()();
 

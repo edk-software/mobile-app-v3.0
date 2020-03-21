@@ -9,19 +9,19 @@ part of 'db_provider.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class MeditationDbData extends DataClass
     implements Insertable<MeditationDbData> {
-  final String id;
-  final String year;
+  final int id;
+  final int year;
   final String type;
-  MeditationDbData(
-      {@required this.id, @required this.year, @required this.type});
+  MeditationDbData({@required this.id, this.year, this.type});
   factory MeditationDbData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
     return MeditationDbData(
-      id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      year: stringType.mapFromDatabaseResponse(data['${effectivePrefix}year']),
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      year: intType.mapFromDatabaseResponse(data['${effectivePrefix}year']),
       type: stringType.mapFromDatabaseResponse(data['${effectivePrefix}type']),
     );
   }
@@ -29,8 +29,8 @@ class MeditationDbData extends DataClass
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return MeditationDbData(
-      id: serializer.fromJson<String>(json['id']),
-      year: serializer.fromJson<String>(json['year']),
+      id: serializer.fromJson<int>(json['id']),
+      year: serializer.fromJson<int>(json['year']),
       type: serializer.fromJson<String>(json['type']),
     );
   }
@@ -38,8 +38,8 @@ class MeditationDbData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'year': serializer.toJson<String>(year),
+      'id': serializer.toJson<int>(id),
+      'year': serializer.toJson<int>(year),
       'type': serializer.toJson<String>(type),
     };
   }
@@ -53,7 +53,7 @@ class MeditationDbData extends DataClass
     );
   }
 
-  MeditationDbData copyWith({String id, String year, String type}) =>
+  MeditationDbData copyWith({int id, int year, String type}) =>
       MeditationDbData(
         id: id ?? this.id,
         year: year ?? this.year,
@@ -82,8 +82,8 @@ class MeditationDbData extends DataClass
 }
 
 class MeditationDbCompanion extends UpdateCompanion<MeditationDbData> {
-  final Value<String> id;
-  final Value<String> year;
+  final Value<int> id;
+  final Value<int> year;
   final Value<String> type;
   const MeditationDbCompanion({
     this.id = const Value.absent(),
@@ -91,14 +91,12 @@ class MeditationDbCompanion extends UpdateCompanion<MeditationDbData> {
     this.type = const Value.absent(),
   });
   MeditationDbCompanion.insert({
-    @required String id,
-    @required String year,
-    @required String type,
-  })  : id = Value(id),
-        year = Value(year),
-        type = Value(type);
+    @required int id,
+    this.year = const Value.absent(),
+    this.type = const Value.absent(),
+  }) : id = Value(id);
   MeditationDbCompanion copyWith(
-      {Value<String> id, Value<String> year, Value<String> type}) {
+      {Value<int> id, Value<int> year, Value<String> type}) {
     return MeditationDbCompanion(
       id: id ?? this.id,
       year: year ?? this.year,
@@ -113,11 +111,11 @@ class $MeditationDbTable extends MeditationDb
   final String _alias;
   $MeditationDbTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedTextColumn _id;
+  GeneratedIntColumn _id;
   @override
-  GeneratedTextColumn get id => _id ??= _constructId();
-  GeneratedTextColumn _constructId() {
-    return GeneratedTextColumn(
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn(
       'id',
       $tableName,
       false,
@@ -125,14 +123,14 @@ class $MeditationDbTable extends MeditationDb
   }
 
   final VerificationMeta _yearMeta = const VerificationMeta('year');
-  GeneratedTextColumn _year;
+  GeneratedIntColumn _year;
   @override
-  GeneratedTextColumn get year => _year ??= _constructYear();
-  GeneratedTextColumn _constructYear() {
-    return GeneratedTextColumn(
+  GeneratedIntColumn get year => _year ??= _constructYear();
+  GeneratedIntColumn _constructYear() {
+    return GeneratedIntColumn(
       'year',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -144,7 +142,7 @@ class $MeditationDbTable extends MeditationDb
     return GeneratedTextColumn(
       'type',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -168,14 +166,10 @@ class $MeditationDbTable extends MeditationDb
     if (d.year.present) {
       context.handle(
           _yearMeta, year.isAcceptableValue(d.year.value, _yearMeta));
-    } else if (isInserting) {
-      context.missing(_yearMeta);
     }
     if (d.type.present) {
       context.handle(
           _typeMeta, type.isAcceptableValue(d.type.value, _typeMeta));
-    } else if (isInserting) {
-      context.missing(_typeMeta);
     }
     return context;
   }
@@ -192,10 +186,10 @@ class $MeditationDbTable extends MeditationDb
   Map<String, Variable> entityToSql(MeditationDbCompanion d) {
     final map = <String, Variable>{};
     if (d.id.present) {
-      map['id'] = Variable<String, StringType>(d.id.value);
+      map['id'] = Variable<int, IntType>(d.id.value);
     }
     if (d.year.present) {
-      map['year'] = Variable<String, StringType>(d.year.value);
+      map['year'] = Variable<int, IntType>(d.year.value);
     }
     if (d.type.present) {
       map['type'] = Variable<String, StringType>(d.type.value);
@@ -214,23 +208,24 @@ class MeditationLanguageVersionDbData extends DataClass
   final String languageName;
   final String languageCode;
   final String title;
-  final String id;
+  final int id;
   final String author;
   final String authorBio;
-  final String meditationId;
+  final int meditationId;
   MeditationLanguageVersionDbData(
-      {@required this.languageName,
-      @required this.languageCode,
-      @required this.title,
+      {this.languageName,
+      this.languageCode,
+      this.title,
       @required this.id,
-      @required this.author,
-      @required this.authorBio,
+      this.author,
+      this.authorBio,
       @required this.meditationId});
   factory MeditationLanguageVersionDbData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
+    final intType = db.typeSystem.forDartType<int>();
     return MeditationLanguageVersionDbData(
       languageName: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}language_name']),
@@ -238,12 +233,12 @@ class MeditationLanguageVersionDbData extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}language_code']),
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
-      id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       author:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}author']),
       authorBio: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}author_bio']),
-      meditationId: stringType
+      meditationId: intType
           .mapFromDatabaseResponse(data['${effectivePrefix}meditation_id']),
     );
   }
@@ -254,10 +249,10 @@ class MeditationLanguageVersionDbData extends DataClass
       languageName: serializer.fromJson<String>(json['languageName']),
       languageCode: serializer.fromJson<String>(json['languageCode']),
       title: serializer.fromJson<String>(json['title']),
-      id: serializer.fromJson<String>(json['id']),
+      id: serializer.fromJson<int>(json['id']),
       author: serializer.fromJson<String>(json['author']),
       authorBio: serializer.fromJson<String>(json['authorBio']),
-      meditationId: serializer.fromJson<String>(json['meditationId']),
+      meditationId: serializer.fromJson<int>(json['meditationId']),
     );
   }
   @override
@@ -267,10 +262,10 @@ class MeditationLanguageVersionDbData extends DataClass
       'languageName': serializer.toJson<String>(languageName),
       'languageCode': serializer.toJson<String>(languageCode),
       'title': serializer.toJson<String>(title),
-      'id': serializer.toJson<String>(id),
+      'id': serializer.toJson<int>(id),
       'author': serializer.toJson<String>(author),
       'authorBio': serializer.toJson<String>(authorBio),
-      'meditationId': serializer.toJson<String>(meditationId),
+      'meditationId': serializer.toJson<int>(meditationId),
     };
   }
 
@@ -301,10 +296,10 @@ class MeditationLanguageVersionDbData extends DataClass
           {String languageName,
           String languageCode,
           String title,
-          String id,
+          int id,
           String author,
           String authorBio,
-          String meditationId}) =>
+          int meditationId}) =>
       MeditationLanguageVersionDbData(
         languageName: languageName ?? this.languageName,
         languageCode: languageCode ?? this.languageCode,
@@ -357,10 +352,10 @@ class MeditationLanguageVersionDbCompanion
   final Value<String> languageName;
   final Value<String> languageCode;
   final Value<String> title;
-  final Value<String> id;
+  final Value<int> id;
   final Value<String> author;
   final Value<String> authorBio;
-  final Value<String> meditationId;
+  final Value<int> meditationId;
   const MeditationLanguageVersionDbCompanion({
     this.languageName = const Value.absent(),
     this.languageCode = const Value.absent(),
@@ -371,28 +366,23 @@ class MeditationLanguageVersionDbCompanion
     this.meditationId = const Value.absent(),
   });
   MeditationLanguageVersionDbCompanion.insert({
-    @required String languageName,
-    @required String languageCode,
-    @required String title,
-    @required String id,
-    @required String author,
-    @required String authorBio,
-    @required String meditationId,
-  })  : languageName = Value(languageName),
-        languageCode = Value(languageCode),
-        title = Value(title),
-        id = Value(id),
-        author = Value(author),
-        authorBio = Value(authorBio),
+    this.languageName = const Value.absent(),
+    this.languageCode = const Value.absent(),
+    this.title = const Value.absent(),
+    @required int id,
+    this.author = const Value.absent(),
+    this.authorBio = const Value.absent(),
+    @required int meditationId,
+  })  : id = Value(id),
         meditationId = Value(meditationId);
   MeditationLanguageVersionDbCompanion copyWith(
       {Value<String> languageName,
       Value<String> languageCode,
       Value<String> title,
-      Value<String> id,
+      Value<int> id,
       Value<String> author,
       Value<String> authorBio,
-      Value<String> meditationId}) {
+      Value<int> meditationId}) {
     return MeditationLanguageVersionDbCompanion(
       languageName: languageName ?? this.languageName,
       languageCode: languageCode ?? this.languageCode,
@@ -422,7 +412,7 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
     return GeneratedTextColumn(
       'language_name',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -436,7 +426,7 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
     return GeneratedTextColumn(
       'language_code',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -448,16 +438,16 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
     return GeneratedTextColumn(
       'title',
       $tableName,
-      false,
+      true,
     );
   }
 
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedTextColumn _id;
+  GeneratedIntColumn _id;
   @override
-  GeneratedTextColumn get id => _id ??= _constructId();
-  GeneratedTextColumn _constructId() {
-    return GeneratedTextColumn(
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn(
       'id',
       $tableName,
       false,
@@ -472,7 +462,7 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
     return GeneratedTextColumn(
       'author',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -484,18 +474,18 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
     return GeneratedTextColumn(
       'author_bio',
       $tableName,
-      false,
+      true,
     );
   }
 
   final VerificationMeta _meditationIdMeta =
       const VerificationMeta('meditationId');
-  GeneratedTextColumn _meditationId;
+  GeneratedIntColumn _meditationId;
   @override
-  GeneratedTextColumn get meditationId =>
+  GeneratedIntColumn get meditationId =>
       _meditationId ??= _constructMeditationId();
-  GeneratedTextColumn _constructMeditationId() {
-    return GeneratedTextColumn(
+  GeneratedIntColumn _constructMeditationId() {
+    return GeneratedIntColumn(
       'meditation_id',
       $tableName,
       false,
@@ -520,22 +510,16 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
           _languageNameMeta,
           languageName.isAcceptableValue(
               d.languageName.value, _languageNameMeta));
-    } else if (isInserting) {
-      context.missing(_languageNameMeta);
     }
     if (d.languageCode.present) {
       context.handle(
           _languageCodeMeta,
           languageCode.isAcceptableValue(
               d.languageCode.value, _languageCodeMeta));
-    } else if (isInserting) {
-      context.missing(_languageCodeMeta);
     }
     if (d.title.present) {
       context.handle(
           _titleMeta, title.isAcceptableValue(d.title.value, _titleMeta));
-    } else if (isInserting) {
-      context.missing(_titleMeta);
     }
     if (d.id.present) {
       context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
@@ -545,14 +529,10 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
     if (d.author.present) {
       context.handle(
           _authorMeta, author.isAcceptableValue(d.author.value, _authorMeta));
-    } else if (isInserting) {
-      context.missing(_authorMeta);
     }
     if (d.authorBio.present) {
       context.handle(_authorBioMeta,
           authorBio.isAcceptableValue(d.authorBio.value, _authorBioMeta));
-    } else if (isInserting) {
-      context.missing(_authorBioMeta);
     }
     if (d.meditationId.present) {
       context.handle(
@@ -588,7 +568,7 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
       map['title'] = Variable<String, StringType>(d.title.value);
     }
     if (d.id.present) {
-      map['id'] = Variable<String, StringType>(d.id.value);
+      map['id'] = Variable<int, IntType>(d.id.value);
     }
     if (d.author.present) {
       map['author'] = Variable<String, StringType>(d.author.value);
@@ -597,7 +577,7 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
       map['author_bio'] = Variable<String, StringType>(d.authorBio.value);
     }
     if (d.meditationId.present) {
-      map['meditation_id'] = Variable<String, StringType>(d.meditationId.value);
+      map['meditation_id'] = Variable<int, IntType>(d.meditationId.value);
     }
     return map;
   }
@@ -611,7 +591,7 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
 class GroupDbData extends DataClass implements Insertable<GroupDbData> {
   final int groupId;
   final String groupName;
-  GroupDbData({@required this.groupId, @required this.groupName});
+  GroupDbData({@required this.groupId, this.groupName});
   factory GroupDbData.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -685,9 +665,8 @@ class GroupDbCompanion extends UpdateCompanion<GroupDbData> {
   });
   GroupDbCompanion.insert({
     @required int groupId,
-    @required String groupName,
-  })  : groupId = Value(groupId),
-        groupName = Value(groupName);
+    this.groupName = const Value.absent(),
+  }) : groupId = Value(groupId);
   GroupDbCompanion copyWith({Value<int> groupId, Value<String> groupName}) {
     return GroupDbCompanion(
       groupId: groupId ?? this.groupId,
@@ -720,7 +699,7 @@ class $GroupDbTable extends GroupDb with TableInfo<$GroupDbTable, GroupDbData> {
     return GeneratedTextColumn(
       'group_name',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -745,8 +724,6 @@ class $GroupDbTable extends GroupDb with TableInfo<$GroupDbTable, GroupDbData> {
     if (d.groupName.present) {
       context.handle(_groupNameMeta,
           groupName.isAcceptableValue(d.groupName.value, _groupNameMeta));
-    } else if (isInserting) {
-      context.missing(_groupNameMeta);
     }
     return context;
   }
@@ -779,12 +756,9 @@ class $GroupDbTable extends GroupDb with TableInfo<$GroupDbTable, GroupDbData> {
 
 class AreaDbData extends DataClass implements Insertable<AreaDbData> {
   final int areaId;
-  final String groupName;
+  final String areaName;
   final int groupId;
-  AreaDbData(
-      {@required this.areaId,
-      @required this.groupName,
-      @required this.groupId});
+  AreaDbData({@required this.areaId, this.areaName, @required this.groupId});
   factory AreaDbData.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -793,8 +767,8 @@ class AreaDbData extends DataClass implements Insertable<AreaDbData> {
     return AreaDbData(
       areaId:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}area_id']),
-      groupName: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}group_name']),
+      areaName: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}area_name']),
       groupId:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}group_id']),
     );
@@ -804,7 +778,7 @@ class AreaDbData extends DataClass implements Insertable<AreaDbData> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return AreaDbData(
       areaId: serializer.fromJson<int>(json['areaId']),
-      groupName: serializer.fromJson<String>(json['groupName']),
+      areaName: serializer.fromJson<String>(json['areaName']),
       groupId: serializer.fromJson<int>(json['groupId']),
     );
   }
@@ -813,7 +787,7 @@ class AreaDbData extends DataClass implements Insertable<AreaDbData> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'areaId': serializer.toJson<int>(areaId),
-      'groupName': serializer.toJson<String>(groupName),
+      'areaName': serializer.toJson<String>(areaName),
       'groupId': serializer.toJson<int>(groupId),
     };
   }
@@ -823,64 +797,62 @@ class AreaDbData extends DataClass implements Insertable<AreaDbData> {
     return AreaDbCompanion(
       areaId:
           areaId == null && nullToAbsent ? const Value.absent() : Value(areaId),
-      groupName: groupName == null && nullToAbsent
+      areaName: areaName == null && nullToAbsent
           ? const Value.absent()
-          : Value(groupName),
+          : Value(areaName),
       groupId: groupId == null && nullToAbsent
           ? const Value.absent()
           : Value(groupId),
     );
   }
 
-  AreaDbData copyWith({int areaId, String groupName, int groupId}) =>
-      AreaDbData(
+  AreaDbData copyWith({int areaId, String areaName, int groupId}) => AreaDbData(
         areaId: areaId ?? this.areaId,
-        groupName: groupName ?? this.groupName,
+        areaName: areaName ?? this.areaName,
         groupId: groupId ?? this.groupId,
       );
   @override
   String toString() {
     return (StringBuffer('AreaDbData(')
           ..write('areaId: $areaId, ')
-          ..write('groupName: $groupName, ')
+          ..write('areaName: $areaName, ')
           ..write('groupId: $groupId')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf(
-      $mrjc(areaId.hashCode, $mrjc(groupName.hashCode, groupId.hashCode)));
+  int get hashCode =>
+      $mrjf($mrjc(areaId.hashCode, $mrjc(areaName.hashCode, groupId.hashCode)));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is AreaDbData &&
           other.areaId == this.areaId &&
-          other.groupName == this.groupName &&
+          other.areaName == this.areaName &&
           other.groupId == this.groupId);
 }
 
 class AreaDbCompanion extends UpdateCompanion<AreaDbData> {
   final Value<int> areaId;
-  final Value<String> groupName;
+  final Value<String> areaName;
   final Value<int> groupId;
   const AreaDbCompanion({
     this.areaId = const Value.absent(),
-    this.groupName = const Value.absent(),
+    this.areaName = const Value.absent(),
     this.groupId = const Value.absent(),
   });
   AreaDbCompanion.insert({
     @required int areaId,
-    @required String groupName,
+    this.areaName = const Value.absent(),
     @required int groupId,
   })  : areaId = Value(areaId),
-        groupName = Value(groupName),
         groupId = Value(groupId);
   AreaDbCompanion copyWith(
-      {Value<int> areaId, Value<String> groupName, Value<int> groupId}) {
+      {Value<int> areaId, Value<String> areaName, Value<int> groupId}) {
     return AreaDbCompanion(
       areaId: areaId ?? this.areaId,
-      groupName: groupName ?? this.groupName,
+      areaName: areaName ?? this.areaName,
       groupId: groupId ?? this.groupId,
     );
   }
@@ -902,15 +874,15 @@ class $AreaDbTable extends AreaDb with TableInfo<$AreaDbTable, AreaDbData> {
     );
   }
 
-  final VerificationMeta _groupNameMeta = const VerificationMeta('groupName');
-  GeneratedTextColumn _groupName;
+  final VerificationMeta _areaNameMeta = const VerificationMeta('areaName');
+  GeneratedTextColumn _areaName;
   @override
-  GeneratedTextColumn get groupName => _groupName ??= _constructGroupName();
-  GeneratedTextColumn _constructGroupName() {
+  GeneratedTextColumn get areaName => _areaName ??= _constructAreaName();
+  GeneratedTextColumn _constructAreaName() {
     return GeneratedTextColumn(
-      'group_name',
+      'area_name',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -927,7 +899,7 @@ class $AreaDbTable extends AreaDb with TableInfo<$AreaDbTable, AreaDbData> {
   }
 
   @override
-  List<GeneratedColumn> get $columns => [areaId, groupName, groupId];
+  List<GeneratedColumn> get $columns => [areaId, areaName, groupId];
   @override
   $AreaDbTable get asDslTable => this;
   @override
@@ -944,11 +916,9 @@ class $AreaDbTable extends AreaDb with TableInfo<$AreaDbTable, AreaDbData> {
     } else if (isInserting) {
       context.missing(_areaIdMeta);
     }
-    if (d.groupName.present) {
-      context.handle(_groupNameMeta,
-          groupName.isAcceptableValue(d.groupName.value, _groupNameMeta));
-    } else if (isInserting) {
-      context.missing(_groupNameMeta);
+    if (d.areaName.present) {
+      context.handle(_areaNameMeta,
+          areaName.isAcceptableValue(d.areaName.value, _areaNameMeta));
     }
     if (d.groupId.present) {
       context.handle(_groupIdMeta,
@@ -973,8 +943,8 @@ class $AreaDbTable extends AreaDb with TableInfo<$AreaDbTable, AreaDbData> {
     if (d.areaId.present) {
       map['area_id'] = Variable<int, IntType>(d.areaId.value);
     }
-    if (d.groupName.present) {
-      map['group_name'] = Variable<String, StringType>(d.groupName.value);
+    if (d.areaName.present) {
+      map['area_name'] = Variable<String, StringType>(d.areaName.value);
     }
     if (d.groupId.present) {
       map['group_id'] = Variable<int, IntType>(d.groupId.value);
@@ -1002,15 +972,15 @@ class RouteDbData extends DataClass implements Insertable<RouteDbData> {
   final int areaId;
   RouteDbData(
       {@required this.routeId,
-      @required this.routeName,
-      @required this.routeFrom,
-      @required this.routeTo,
-      @required this.routeLenght,
-      @required this.routeAcent,
-      @required this.routeKmlFile,
-      @required this.routeDescriptionFile,
-      @required this.routeDescription,
-      @required this.routeLastUpdate,
+      this.routeName,
+      this.routeFrom,
+      this.routeTo,
+      this.routeLenght,
+      this.routeAcent,
+      this.routeKmlFile,
+      this.routeDescriptionFile,
+      this.routeDescription,
+      this.routeLastUpdate,
       @required this.areaId});
   factory RouteDbData.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -1224,26 +1194,17 @@ class RouteDbCompanion extends UpdateCompanion<RouteDbData> {
   });
   RouteDbCompanion.insert({
     @required int routeId,
-    @required String routeName,
-    @required String routeFrom,
-    @required String routeTo,
-    @required String routeLenght,
-    @required String routeAcent,
-    @required String routeKmlFile,
-    @required String routeDescriptionFile,
-    @required String routeDescription,
-    @required String routeLastUpdate,
+    this.routeName = const Value.absent(),
+    this.routeFrom = const Value.absent(),
+    this.routeTo = const Value.absent(),
+    this.routeLenght = const Value.absent(),
+    this.routeAcent = const Value.absent(),
+    this.routeKmlFile = const Value.absent(),
+    this.routeDescriptionFile = const Value.absent(),
+    this.routeDescription = const Value.absent(),
+    this.routeLastUpdate = const Value.absent(),
     @required int areaId,
   })  : routeId = Value(routeId),
-        routeName = Value(routeName),
-        routeFrom = Value(routeFrom),
-        routeTo = Value(routeTo),
-        routeLenght = Value(routeLenght),
-        routeAcent = Value(routeAcent),
-        routeKmlFile = Value(routeKmlFile),
-        routeDescriptionFile = Value(routeDescriptionFile),
-        routeDescription = Value(routeDescription),
-        routeLastUpdate = Value(routeLastUpdate),
         areaId = Value(areaId);
   RouteDbCompanion copyWith(
       {Value<int> routeId,
@@ -1297,7 +1258,7 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
     return GeneratedTextColumn(
       'route_name',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1309,7 +1270,7 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
     return GeneratedTextColumn(
       'route_from',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1321,7 +1282,7 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
     return GeneratedTextColumn(
       'route_to',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1335,7 +1296,7 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
     return GeneratedTextColumn(
       'route_lenght',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1347,7 +1308,7 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
     return GeneratedTextColumn(
       'route_acent',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1361,7 +1322,7 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
     return GeneratedTextColumn(
       'route_kml_file',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1375,7 +1336,7 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
     return GeneratedTextColumn(
       'route_description_file',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1389,7 +1350,7 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
     return GeneratedTextColumn(
       'route_description',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1403,7 +1364,7 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
     return GeneratedTextColumn(
       'route_last_update',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1452,64 +1413,46 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
     if (d.routeName.present) {
       context.handle(_routeNameMeta,
           routeName.isAcceptableValue(d.routeName.value, _routeNameMeta));
-    } else if (isInserting) {
-      context.missing(_routeNameMeta);
     }
     if (d.routeFrom.present) {
       context.handle(_routeFromMeta,
           routeFrom.isAcceptableValue(d.routeFrom.value, _routeFromMeta));
-    } else if (isInserting) {
-      context.missing(_routeFromMeta);
     }
     if (d.routeTo.present) {
       context.handle(_routeToMeta,
           routeTo.isAcceptableValue(d.routeTo.value, _routeToMeta));
-    } else if (isInserting) {
-      context.missing(_routeToMeta);
     }
     if (d.routeLenght.present) {
       context.handle(_routeLenghtMeta,
           routeLenght.isAcceptableValue(d.routeLenght.value, _routeLenghtMeta));
-    } else if (isInserting) {
-      context.missing(_routeLenghtMeta);
     }
     if (d.routeAcent.present) {
       context.handle(_routeAcentMeta,
           routeAcent.isAcceptableValue(d.routeAcent.value, _routeAcentMeta));
-    } else if (isInserting) {
-      context.missing(_routeAcentMeta);
     }
     if (d.routeKmlFile.present) {
       context.handle(
           _routeKmlFileMeta,
           routeKmlFile.isAcceptableValue(
               d.routeKmlFile.value, _routeKmlFileMeta));
-    } else if (isInserting) {
-      context.missing(_routeKmlFileMeta);
     }
     if (d.routeDescriptionFile.present) {
       context.handle(
           _routeDescriptionFileMeta,
           routeDescriptionFile.isAcceptableValue(
               d.routeDescriptionFile.value, _routeDescriptionFileMeta));
-    } else if (isInserting) {
-      context.missing(_routeDescriptionFileMeta);
     }
     if (d.routeDescription.present) {
       context.handle(
           _routeDescriptionMeta,
           routeDescription.isAcceptableValue(
               d.routeDescription.value, _routeDescriptionMeta));
-    } else if (isInserting) {
-      context.missing(_routeDescriptionMeta);
     }
     if (d.routeLastUpdate.present) {
       context.handle(
           _routeLastUpdateMeta,
           routeLastUpdate.isAcceptableValue(
               d.routeLastUpdate.value, _routeLastUpdateMeta));
-    } else if (isInserting) {
-      context.missing(_routeLastUpdateMeta);
     }
     if (d.areaId.present) {
       context.handle(
@@ -1579,43 +1522,48 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
 
 class StationDbData extends DataClass implements Insertable<StationDbData> {
   final String title;
-  final String id;
+  final int id;
   final String author;
   final String authorBio;
-  final String stationId;
+  final int stationId;
   final String placeId;
   final String audioFileUrl;
   final String stationText;
+  final int meditationId;
   StationDbData(
-      {@required this.title,
+      {this.title,
       @required this.id,
-      @required this.author,
-      @required this.authorBio,
-      @required this.stationId,
-      @required this.placeId,
-      @required this.audioFileUrl,
-      @required this.stationText});
+      this.author,
+      this.authorBio,
+      this.stationId,
+      this.placeId,
+      this.audioFileUrl,
+      this.stationText,
+      @required this.meditationId});
   factory StationDbData.fromData(
       Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
+    final intType = db.typeSystem.forDartType<int>();
     return StationDbData(
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
-      id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       author:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}author']),
       authorBio: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}author_bio']),
-      stationId: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}station_id']),
+      stationId:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}station_id']),
       placeId: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}place_id']),
       audioFileUrl: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}audio_file_url']),
       stationText: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}station_text']),
+      meditationId: intType
+          .mapFromDatabaseResponse(data['${effectivePrefix}meditation_id']),
     );
   }
   factory StationDbData.fromJson(Map<String, dynamic> json,
@@ -1623,13 +1571,14 @@ class StationDbData extends DataClass implements Insertable<StationDbData> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return StationDbData(
       title: serializer.fromJson<String>(json['title']),
-      id: serializer.fromJson<String>(json['id']),
+      id: serializer.fromJson<int>(json['id']),
       author: serializer.fromJson<String>(json['author']),
       authorBio: serializer.fromJson<String>(json['authorBio']),
-      stationId: serializer.fromJson<String>(json['stationId']),
+      stationId: serializer.fromJson<int>(json['stationId']),
       placeId: serializer.fromJson<String>(json['placeId']),
       audioFileUrl: serializer.fromJson<String>(json['audioFileUrl']),
       stationText: serializer.fromJson<String>(json['stationText']),
+      meditationId: serializer.fromJson<int>(json['meditationId']),
     );
   }
   @override
@@ -1637,13 +1586,14 @@ class StationDbData extends DataClass implements Insertable<StationDbData> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'title': serializer.toJson<String>(title),
-      'id': serializer.toJson<String>(id),
+      'id': serializer.toJson<int>(id),
       'author': serializer.toJson<String>(author),
       'authorBio': serializer.toJson<String>(authorBio),
-      'stationId': serializer.toJson<String>(stationId),
+      'stationId': serializer.toJson<int>(stationId),
       'placeId': serializer.toJson<String>(placeId),
       'audioFileUrl': serializer.toJson<String>(audioFileUrl),
       'stationText': serializer.toJson<String>(stationText),
+      'meditationId': serializer.toJson<int>(meditationId),
     };
   }
 
@@ -1670,18 +1620,22 @@ class StationDbData extends DataClass implements Insertable<StationDbData> {
       stationText: stationText == null && nullToAbsent
           ? const Value.absent()
           : Value(stationText),
+      meditationId: meditationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(meditationId),
     );
   }
 
   StationDbData copyWith(
           {String title,
-          String id,
+          int id,
           String author,
           String authorBio,
-          String stationId,
+          int stationId,
           String placeId,
           String audioFileUrl,
-          String stationText}) =>
+          String stationText,
+          int meditationId}) =>
       StationDbData(
         title: title ?? this.title,
         id: id ?? this.id,
@@ -1691,6 +1645,7 @@ class StationDbData extends DataClass implements Insertable<StationDbData> {
         placeId: placeId ?? this.placeId,
         audioFileUrl: audioFileUrl ?? this.audioFileUrl,
         stationText: stationText ?? this.stationText,
+        meditationId: meditationId ?? this.meditationId,
       );
   @override
   String toString() {
@@ -1702,7 +1657,8 @@ class StationDbData extends DataClass implements Insertable<StationDbData> {
           ..write('stationId: $stationId, ')
           ..write('placeId: $placeId, ')
           ..write('audioFileUrl: $audioFileUrl, ')
-          ..write('stationText: $stationText')
+          ..write('stationText: $stationText, ')
+          ..write('meditationId: $meditationId')
           ..write(')'))
         .toString();
   }
@@ -1720,8 +1676,10 @@ class StationDbData extends DataClass implements Insertable<StationDbData> {
                       stationId.hashCode,
                       $mrjc(
                           placeId.hashCode,
-                          $mrjc(audioFileUrl.hashCode,
-                              stationText.hashCode))))))));
+                          $mrjc(
+                              audioFileUrl.hashCode,
+                              $mrjc(stationText.hashCode,
+                                  meditationId.hashCode)))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -1733,18 +1691,20 @@ class StationDbData extends DataClass implements Insertable<StationDbData> {
           other.stationId == this.stationId &&
           other.placeId == this.placeId &&
           other.audioFileUrl == this.audioFileUrl &&
-          other.stationText == this.stationText);
+          other.stationText == this.stationText &&
+          other.meditationId == this.meditationId);
 }
 
 class StationDbCompanion extends UpdateCompanion<StationDbData> {
   final Value<String> title;
-  final Value<String> id;
+  final Value<int> id;
   final Value<String> author;
   final Value<String> authorBio;
-  final Value<String> stationId;
+  final Value<int> stationId;
   final Value<String> placeId;
   final Value<String> audioFileUrl;
   final Value<String> stationText;
+  final Value<int> meditationId;
   const StationDbCompanion({
     this.title = const Value.absent(),
     this.id = const Value.absent(),
@@ -1754,33 +1714,30 @@ class StationDbCompanion extends UpdateCompanion<StationDbData> {
     this.placeId = const Value.absent(),
     this.audioFileUrl = const Value.absent(),
     this.stationText = const Value.absent(),
+    this.meditationId = const Value.absent(),
   });
   StationDbCompanion.insert({
-    @required String title,
-    @required String id,
-    @required String author,
-    @required String authorBio,
-    @required String stationId,
-    @required String placeId,
-    @required String audioFileUrl,
-    @required String stationText,
-  })  : title = Value(title),
-        id = Value(id),
-        author = Value(author),
-        authorBio = Value(authorBio),
-        stationId = Value(stationId),
-        placeId = Value(placeId),
-        audioFileUrl = Value(audioFileUrl),
-        stationText = Value(stationText);
+    this.title = const Value.absent(),
+    @required int id,
+    this.author = const Value.absent(),
+    this.authorBio = const Value.absent(),
+    this.stationId = const Value.absent(),
+    this.placeId = const Value.absent(),
+    this.audioFileUrl = const Value.absent(),
+    this.stationText = const Value.absent(),
+    @required int meditationId,
+  })  : id = Value(id),
+        meditationId = Value(meditationId);
   StationDbCompanion copyWith(
       {Value<String> title,
-      Value<String> id,
+      Value<int> id,
       Value<String> author,
       Value<String> authorBio,
-      Value<String> stationId,
+      Value<int> stationId,
       Value<String> placeId,
       Value<String> audioFileUrl,
-      Value<String> stationText}) {
+      Value<String> stationText,
+      Value<int> meditationId}) {
     return StationDbCompanion(
       title: title ?? this.title,
       id: id ?? this.id,
@@ -1790,6 +1747,7 @@ class StationDbCompanion extends UpdateCompanion<StationDbData> {
       placeId: placeId ?? this.placeId,
       audioFileUrl: audioFileUrl ?? this.audioFileUrl,
       stationText: stationText ?? this.stationText,
+      meditationId: meditationId ?? this.meditationId,
     );
   }
 }
@@ -1807,16 +1765,16 @@ class $StationDbTable extends StationDb
     return GeneratedTextColumn(
       'title',
       $tableName,
-      false,
+      true,
     );
   }
 
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedTextColumn _id;
+  GeneratedIntColumn _id;
   @override
-  GeneratedTextColumn get id => _id ??= _constructId();
-  GeneratedTextColumn _constructId() {
-    return GeneratedTextColumn(
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn(
       'id',
       $tableName,
       false,
@@ -1831,7 +1789,7 @@ class $StationDbTable extends StationDb
     return GeneratedTextColumn(
       'author',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1843,19 +1801,19 @@ class $StationDbTable extends StationDb
     return GeneratedTextColumn(
       'author_bio',
       $tableName,
-      false,
+      true,
     );
   }
 
   final VerificationMeta _stationIdMeta = const VerificationMeta('stationId');
-  GeneratedTextColumn _stationId;
+  GeneratedIntColumn _stationId;
   @override
-  GeneratedTextColumn get stationId => _stationId ??= _constructStationId();
-  GeneratedTextColumn _constructStationId() {
-    return GeneratedTextColumn(
+  GeneratedIntColumn get stationId => _stationId ??= _constructStationId();
+  GeneratedIntColumn _constructStationId() {
+    return GeneratedIntColumn(
       'station_id',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1867,7 +1825,7 @@ class $StationDbTable extends StationDb
     return GeneratedTextColumn(
       'place_id',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1881,7 +1839,7 @@ class $StationDbTable extends StationDb
     return GeneratedTextColumn(
       'audio_file_url',
       $tableName,
-      false,
+      true,
     );
   }
 
@@ -1894,6 +1852,20 @@ class $StationDbTable extends StationDb
   GeneratedTextColumn _constructStationText() {
     return GeneratedTextColumn(
       'station_text',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _meditationIdMeta =
+      const VerificationMeta('meditationId');
+  GeneratedIntColumn _meditationId;
+  @override
+  GeneratedIntColumn get meditationId =>
+      _meditationId ??= _constructMeditationId();
+  GeneratedIntColumn _constructMeditationId() {
+    return GeneratedIntColumn(
+      'meditation_id',
       $tableName,
       false,
     );
@@ -1908,7 +1880,8 @@ class $StationDbTable extends StationDb
         stationId,
         placeId,
         audioFileUrl,
-        stationText
+        stationText,
+        meditationId
       ];
   @override
   $StationDbTable get asDslTable => this;
@@ -1923,8 +1896,6 @@ class $StationDbTable extends StationDb
     if (d.title.present) {
       context.handle(
           _titleMeta, title.isAcceptableValue(d.title.value, _titleMeta));
-    } else if (isInserting) {
-      context.missing(_titleMeta);
     }
     if (d.id.present) {
       context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
@@ -1934,40 +1905,36 @@ class $StationDbTable extends StationDb
     if (d.author.present) {
       context.handle(
           _authorMeta, author.isAcceptableValue(d.author.value, _authorMeta));
-    } else if (isInserting) {
-      context.missing(_authorMeta);
     }
     if (d.authorBio.present) {
       context.handle(_authorBioMeta,
           authorBio.isAcceptableValue(d.authorBio.value, _authorBioMeta));
-    } else if (isInserting) {
-      context.missing(_authorBioMeta);
     }
     if (d.stationId.present) {
       context.handle(_stationIdMeta,
           stationId.isAcceptableValue(d.stationId.value, _stationIdMeta));
-    } else if (isInserting) {
-      context.missing(_stationIdMeta);
     }
     if (d.placeId.present) {
       context.handle(_placeIdMeta,
           placeId.isAcceptableValue(d.placeId.value, _placeIdMeta));
-    } else if (isInserting) {
-      context.missing(_placeIdMeta);
     }
     if (d.audioFileUrl.present) {
       context.handle(
           _audioFileUrlMeta,
           audioFileUrl.isAcceptableValue(
               d.audioFileUrl.value, _audioFileUrlMeta));
-    } else if (isInserting) {
-      context.missing(_audioFileUrlMeta);
     }
     if (d.stationText.present) {
       context.handle(_stationTextMeta,
           stationText.isAcceptableValue(d.stationText.value, _stationTextMeta));
+    }
+    if (d.meditationId.present) {
+      context.handle(
+          _meditationIdMeta,
+          meditationId.isAcceptableValue(
+              d.meditationId.value, _meditationIdMeta));
     } else if (isInserting) {
-      context.missing(_stationTextMeta);
+      context.missing(_meditationIdMeta);
     }
     return context;
   }
@@ -1987,7 +1954,7 @@ class $StationDbTable extends StationDb
       map['title'] = Variable<String, StringType>(d.title.value);
     }
     if (d.id.present) {
-      map['id'] = Variable<String, StringType>(d.id.value);
+      map['id'] = Variable<int, IntType>(d.id.value);
     }
     if (d.author.present) {
       map['author'] = Variable<String, StringType>(d.author.value);
@@ -1996,7 +1963,7 @@ class $StationDbTable extends StationDb
       map['author_bio'] = Variable<String, StringType>(d.authorBio.value);
     }
     if (d.stationId.present) {
-      map['station_id'] = Variable<String, StringType>(d.stationId.value);
+      map['station_id'] = Variable<int, IntType>(d.stationId.value);
     }
     if (d.placeId.present) {
       map['place_id'] = Variable<String, StringType>(d.placeId.value);
@@ -2007,6 +1974,9 @@ class $StationDbTable extends StationDb
     }
     if (d.stationText.present) {
       map['station_text'] = Variable<String, StringType>(d.stationText.value);
+    }
+    if (d.meditationId.present) {
+      map['meditation_id'] = Variable<int, IntType>(d.meditationId.value);
     }
     return map;
   }

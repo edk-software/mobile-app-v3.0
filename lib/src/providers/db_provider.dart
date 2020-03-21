@@ -32,4 +32,35 @@ class DatabaseProvider extends _$DatabaseProvider {
 
   @override
   int get schemaVersion => 1;
+
+  Stream<List<StationDbData>> watchStations(int meditationId) {
+    return (select(stationDb)
+          ..where((station) => station.meditationId.equals(meditationId)))
+        .watch();
+  }
+
+  saveMeditations(List<MeditationDbData> meditations) async {
+    delete(meditationDb);
+    await batch((batch) {
+      batch.insertAll(meditationDb, meditations);
+    });
+  }
+
+  saveMeditationsLanguageVersions(
+      List<MeditationLanguageVersionDbData> meditationsVersions,
+      int meditationId) async {
+    delete(meditationLanguageVersionDb)
+        .where((tbl) => tbl.meditationId.equals(meditationId));
+
+    await batch((batch) {
+      batch.insertAll(meditationLanguageVersionDb, meditationsVersions);
+    });
+  }
+
+  saveStations(List<StationDbData> stations) async {
+    delete(stationDb);
+    await batch((batch) {
+      batch.insertAll(stationDb, stations);
+    });
+  }
 }
