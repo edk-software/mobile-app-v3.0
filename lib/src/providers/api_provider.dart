@@ -6,6 +6,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ApiProvider {
+  ApiProvider._privateConstructor();
+
+  static final ApiProvider _instance = ApiProvider._privateConstructor();
+
+  factory ApiProvider() {
+    return _instance;
+  }
+
   final _baseUrl = "https://mobileapi.edk.org.pl/mobile/";
 
   Future<EditionState> fetchEditionState() async {

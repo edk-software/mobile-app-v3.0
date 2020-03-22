@@ -28,7 +28,14 @@ LazyDatabase _openConnection() {
   StationDb
 ])
 class DatabaseProvider extends _$DatabaseProvider {
-  DatabaseProvider() : super(_openConnection());
+  DatabaseProvider._privateConstructor() : super(_openConnection());
+
+  static final DatabaseProvider _instance =
+      DatabaseProvider._privateConstructor();
+
+  factory DatabaseProvider() {
+    return _instance;
+  }
 
   @override
   int get schemaVersion => 1;
@@ -40,7 +47,7 @@ class DatabaseProvider extends _$DatabaseProvider {
   }
 
   saveMeditations(List<MeditationDbData> meditations) async {
-    delete(meditationDb);
+    delete(meditationDb).go();
     await batch((batch) {
       batch.insertAll(meditationDb, meditations);
     });
@@ -49,8 +56,10 @@ class DatabaseProvider extends _$DatabaseProvider {
   saveMeditationsLanguageVersions(
       List<MeditationLanguageVersionDbData> meditationsVersions,
       int meditationId) async {
-    delete(meditationLanguageVersionDb)
-        .where((tbl) => tbl.meditationId.equals(meditationId));
+    (delete(meditationLanguageVersionDb)
+          ..where((meditationVersion) =>
+              meditationVersion.meditationId.equals(meditationId)))
+        .go();
 
     await batch((batch) {
       batch.insertAll(meditationLanguageVersionDb, meditationsVersions);
@@ -58,7 +67,7 @@ class DatabaseProvider extends _$DatabaseProvider {
   }
 
   saveStations(List<StationDbData> stations) async {
-    delete(stationDb);
+    delete(stationDb).go();
     await batch((batch) {
       batch.insertAll(stationDb, stations);
     });

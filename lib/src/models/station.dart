@@ -60,14 +60,14 @@ class Station {
 
   Station.fromDbObject(StationDbData stationDb) {
     this.title = stationDb.title.toString();
-    this.id = stationDb.id.toString() as int;
+    this.id = stationDb.id;
     this.author = stationDb.author.toString();
     this.authorBio = stationDb.authorBio.toString();
-    this.stationId = stationDb.stationId.toString() as int;
+    this.stationId = stationDb.stationId;
     this.placeId = stationDb.placeId.toString();
     this.audioFileUrl = stationDb.audioFileUrl.toString();
     this.stationText = stationDb.stationText.toString();
-    this.meditationId = stationDb.toString() as int;
+    this.meditationId = stationDb.meditationId;
   }
 
   StationDbData toDbObject(int meditationId) {

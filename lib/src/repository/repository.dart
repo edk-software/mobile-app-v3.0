@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:edk_mobile_v3/src/models/edition_state.dart';
 import 'package:edk_mobile_v3/src/models/meditation.dart';
 import 'package:edk_mobile_v3/src/models/station.dart';
-import 'package:rxdart/rxdart.dart';
 
 import '../providers/api_provider.dart';
 import '../providers/db_provider.dart';
@@ -54,9 +55,16 @@ class Repository {
 
     return _dbProvider
         .watchStations(meditationId)
-        .flatMap((list) => Stream.fromIterable(list))
-        .map((item) => Station.fromDbObject(item))
-        .toList()
-        .asStream();
+        .transform(mapStationDataFromDb);
   }
+
+  final mapStationDataFromDb =
+      StreamTransformer<List<StationDbData>, List<Station>>.fromHandlers(
+          handleData: (stationDbData, sink) {
+    var stations = List<Station>();
+    stationDbData.forEach((element) {
+      stations.add(Station.fromDbObject(element));
+    });
+    sink.add(stations);
+  });
 }

@@ -5,7 +5,6 @@ import 'package:edk_mobile_v3/src/repository/repository.dart';
 
 class MeditationsBloc {
   final _repository = Repository();
-  final _stations = StreamController<List<Station>>();
 
   MeditationsBloc() {
     fetchMeditations();
@@ -15,9 +14,5 @@ class MeditationsBloc {
 
   fetchMeditations() {
     _repository.fetchMeditations();
-  }
-
-  dispose() {
-    _stations.close();
   }
 }

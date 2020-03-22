@@ -12,7 +12,7 @@ class MeditationsScreen extends StatelessWidget {
         child: Column(
           children: <Widget>[
             logo(),
-            meditationsInfo(),
+            meditationsInfo(bloc),
             meditationsList(bloc),
           ],
         ),
@@ -33,14 +33,25 @@ class MeditationsScreen extends StatelessWidget {
     );
   }
 
-  Widget meditationsInfo() {
+  Widget meditationsInfo(MeditationsBloc bloc) {
     return Padding(
       padding: EdgeInsets.all(15),
-      child: Column(children: <Widget>[
-        Text(""),
-        // Spacer(),
-        Text(""),
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          StreamBuilder(
+            stream: bloc.stations,
+            builder: (context, snapshot) {
+              return Text(
+                "${snapshot.data.length} dostępnych rozważań",
+                textAlign: TextAlign.left,
+              );
+            },
+          ),
+          // Spacer(),
+          Text(""),
+        ],
+      ),
     );
   }
 
@@ -52,7 +63,9 @@ class MeditationsScreen extends StatelessWidget {
           return CircularProgressIndicator();
         }
         return ListView.builder(
-            itemCount: snapshot.data.size,
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: snapshot.data.length,
             itemBuilder: (context, index) {
               return meditationListTile(snapshot.data[index]);
             });
@@ -61,6 +74,10 @@ class MeditationsScreen extends StatelessWidget {
   }
 
   Widget meditationListTile(Station station) {
-    return ListTile();
+    return ListTile(
+      title: Text(
+        "${station.title}!",
+      ),
+    );
   }
 }

@@ -2,6 +2,17 @@ import 'package:edk_mobile_v3/src/models/edition_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesProvider {
+  SharedPreferencesProvider._privateConstructor() {
+    init();
+  }
+
+  static final SharedPreferencesProvider _instance =
+      SharedPreferencesProvider._privateConstructor();
+
+  factory SharedPreferencesProvider() {
+    return _instance;
+  }
+
   SharedPreferences _prefs;
 
   final _currentYearId = "sp_provider_currentYearId";
@@ -13,10 +24,6 @@ class SharedPreferencesProvider {
   final _currentMeditationsParentId = "sp_provider_currentMeditationsParentId";
   final _currentMeditationsName = "sp_provider_currentMeditationsName";
   final _meditationsLastUpdate = "sp_provider_meditationsLastUpdate";
-
-  SharedPreferencesProvider() {
-    init();
-  }
 
   init() async {
     _prefs = await SharedPreferences.getInstance();
