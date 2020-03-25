@@ -15,10 +15,10 @@ class Repository {
 
   fetchMeditations() async {
     EditionState editionState = await _apiProvider.fetchEditionState();
+    int meditationsLastUpdate = await _spProvider.getMeditationsLastUpdate();
     if (editionState != null) {
       // Check if update is needed for Meditations
-      if (editionState.meditationsLastUpdate !=
-          _spProvider.getRoutesLastUpdate()) {
+      if (editionState.meditationsLastUpdate != meditationsLastUpdate) {
         List<Meditation> meditations =
             await _apiProvider.fetchMeditationsList();
 
@@ -48,6 +48,10 @@ class Repository {
       // Save new Edition state into database
       _spProvider.setEditionState(editionState);
     }
+  }
+
+  Stream<int> watchCurrentEditionYear() {
+    return _spProvider.watchCurrentEditionYear();
   }
 
   Stream<List<Station>> watchStations() {

@@ -1,5 +1,5 @@
-import 'package:edk_mobile_v3/src/models/station.dart';
 import 'package:edk_mobile_v3/src/screens/meditations/meditations_bloc.dart';
+import 'package:edk_mobile_v3/src/screens/meditations/widgets/meditations_list_tile_widget.dart';
 import 'package:flutter/material.dart';
 
 class MeditationsScreen extends StatelessWidget {
@@ -11,11 +11,22 @@ class MeditationsScreen extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: <Widget>[
+            topBar(),
             logo(),
             meditationsInfo(bloc),
             meditationsList(bloc),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget topBar() {
+    return Container(
+      alignment: Alignment.centerRight,
+      child: FlatButton(
+        onPressed: null,
+        child: Image.asset("assets/images/settings.png"),
       ),
     );
   }
@@ -35,21 +46,47 @@ class MeditationsScreen extends StatelessWidget {
 
   Widget meditationsInfo(MeditationsBloc bloc) {
     return Padding(
-      padding: EdgeInsets.all(15),
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           StreamBuilder(
             stream: bloc.stations,
             builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Container();
+              }
               return Text(
                 "${snapshot.data.length} dostępnych rozważań",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.normal,
+                  fontFamily: 'Open Sans',
+                ),
                 textAlign: TextAlign.left,
               );
             },
           ),
-          // Spacer(),
-          Text(""),
+          Container(height: 20),
+          StreamBuilder(
+            stream: bloc.editionYear,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Container();
+              }
+              return Text(
+                "${snapshot.data}",
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  fontStyle: FontStyle.normal,
+                  fontFamily: 'Open Sans',
+                ),
+                textAlign: TextAlign.left,
+              );
+            },
+          ),
         ],
       ),
     );
@@ -62,22 +99,19 @@ class MeditationsScreen extends StatelessWidget {
         if (!snapshot.hasData) {
           return CircularProgressIndicator();
         }
-        return ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: snapshot.data.length,
-            itemBuilder: (context, index) {
-              return meditationListTile(snapshot.data[index]);
-            });
+        return ListView.separated(
+          padding: EdgeInsets.only(bottom: 10),
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: snapshot.data.length,
+          itemBuilder: (context, index) {
+            return MeditationListTile(snapshot.data[index], "PL");
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return Container(height: 10);
+          },
+        );
       },
-    );
-  }
-
-  Widget meditationListTile(Station station) {
-    return ListTile(
-      title: Text(
-        "${station.title}!",
-      ),
     );
   }
 }

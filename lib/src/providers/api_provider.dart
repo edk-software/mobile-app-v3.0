@@ -43,7 +43,7 @@ class ApiProvider {
     final response =
         await http.get("$_baseUrl/meditationById?meditationId=$id");
     try {
-      final parsedJson = json.decode(response.body);
+      final parsedJson = json.decode(utf8.decode(response.bodyBytes));
       return StationsResponse.fromJson(parsedJson[0]);
     } catch (_) {
       return null;

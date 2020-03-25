@@ -11,6 +11,7 @@ class MeditationsBloc {
   }
 
   Stream<List<Station>> get stations => _repository.watchStations();
+  Stream<int> get editionYear => _repository.watchCurrentEditionYear();
 
   fetchMeditations() {
     _repository.fetchMeditations();

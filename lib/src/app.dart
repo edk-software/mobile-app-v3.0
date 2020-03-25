@@ -1,3 +1,4 @@
+import 'package:edk_mobile_v3/src/repository/repository.dart';
 import 'package:edk_mobile_v3/src/screens/edk/edk_screen.dart';
 import 'package:edk_mobile_v3/src/screens/meditations/meditations_screen.dart';
 import 'package:edk_mobile_v3/src/screens/routes/routes_screen.dart';
@@ -45,6 +46,13 @@ class HomeState extends State<Home> {
     MeditationsScreen(),
     SupportScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    Repository();
+  }
 
   @override
   Widget build(BuildContext context) {

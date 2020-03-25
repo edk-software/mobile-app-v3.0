@@ -1,4 +1,5 @@
 import 'package:edk_mobile_v3/src/models/edition_state.dart';
+import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesProvider {
@@ -13,7 +14,7 @@ class SharedPreferencesProvider {
     return _instance;
   }
 
-  SharedPreferences _prefs;
+  RxSharedPreferences _prefs;
 
   final _currentYearId = "sp_provider_currentYearId";
   final _routesLastUpdate = "sp_provider_routesLastUpdate";
@@ -26,7 +27,7 @@ class SharedPreferencesProvider {
   final _meditationsLastUpdate = "sp_provider_meditationsLastUpdate";
 
   init() async {
-    _prefs = await SharedPreferences.getInstance();
+    _prefs = RxSharedPreferences(await SharedPreferences.getInstance());
   }
 
   setEditionState(EditionState state) {
@@ -45,7 +46,14 @@ class SharedPreferencesProvider {
     _prefs.setInt(_currentYearId, year);
   }
 
-  int getCurrentEditionYear() {
+  // Reactive Shared preferences
+  watchCurrentEditionYear() {
+    return _prefs.getIntStream(_currentYearId);
+  }
+
+  // Conventional getters and setters for Shared preferences
+
+  Future<int> getCurrentEditionYear() {
     return _prefs.getInt(_currentYearId);
   }
 
@@ -53,7 +61,7 @@ class SharedPreferencesProvider {
     _prefs.setInt(_routesLastUpdate, lastUpdate);
   }
 
-  int getRoutesLastUpdate() {
+  Future<int> getRoutesLastUpdate() {
     return _prefs.getInt(_routesLastUpdate);
   }
 
@@ -61,7 +69,7 @@ class SharedPreferencesProvider {
     _prefs.setInt(_routesCount, count);
   }
 
-  int getRoutesCount() {
+  Future<int> getRoutesCount() {
     return _prefs.getInt(_routesCount);
   }
 
@@ -69,7 +77,7 @@ class SharedPreferencesProvider {
     _prefs.setInt(_areasCount, count);
   }
 
-  int getAreasCount() {
+  Future<int> getAreasCount() {
     return _prefs.getInt(_areasCount);
   }
 
@@ -77,7 +85,7 @@ class SharedPreferencesProvider {
     _prefs.setInt(_groupsCount, count);
   }
 
-  int getGroupsCount() {
+  Future<int> getGroupsCount() {
     return _prefs.getInt(_groupsCount);
   }
 
@@ -85,7 +93,7 @@ class SharedPreferencesProvider {
     _prefs.setString(_countysCount, count);
   }
 
-  String getCountysCount() {
+  Future<String> getCountysCount() {
     return _prefs.getString(_countysCount);
   }
 
@@ -93,7 +101,7 @@ class SharedPreferencesProvider {
     _prefs.setInt(_currentMeditationsParentId, parentId);
   }
 
-  int getCurrentMeditationsParentId() {
+  Future<int> getCurrentMeditationsParentId() {
     return _prefs.getInt(_currentMeditationsParentId);
   }
 
@@ -101,7 +109,7 @@ class SharedPreferencesProvider {
     _prefs.setString(_currentMeditationsName, name);
   }
 
-  String getCurrentMeditationsName() {
+  Future<String> getCurrentMeditationsName() {
     return _prefs.getString(_currentMeditationsName);
   }
 
@@ -109,7 +117,7 @@ class SharedPreferencesProvider {
     _prefs.setInt(_meditationsLastUpdate, lastUpdate);
   }
 
-  int getMeditationsLastUpdate() {
+  Future<int> getMeditationsLastUpdate() {
     return _prefs.getInt(_meditationsLastUpdate);
   }
 }
