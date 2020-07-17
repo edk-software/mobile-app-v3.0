@@ -25,6 +25,29 @@ class MeditationDbData extends DataClass
       type: stringType.mapFromDatabaseResponse(data['${effectivePrefix}type']),
     );
   }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || year != null) {
+      map['year'] = Variable<int>(year);
+    }
+    if (!nullToAbsent || type != null) {
+      map['type'] = Variable<String>(type);
+    }
+    return map;
+  }
+
+  MeditationDbCompanion toCompanion(bool nullToAbsent) {
+    return MeditationDbCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      year: year == null && nullToAbsent ? const Value.absent() : Value(year),
+      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
+    );
+  }
+
   factory MeditationDbData.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -42,15 +65,6 @@ class MeditationDbData extends DataClass
       'year': serializer.toJson<int>(year),
       'type': serializer.toJson<String>(type),
     };
-  }
-
-  @override
-  MeditationDbCompanion createCompanion(bool nullToAbsent) {
-    return MeditationDbCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      year: year == null && nullToAbsent ? const Value.absent() : Value(year),
-      type: type == null && nullToAbsent ? const Value.absent() : Value(type),
-    );
   }
 
   MeditationDbData copyWith({int id, int year, String type}) =>
@@ -91,10 +105,22 @@ class MeditationDbCompanion extends UpdateCompanion<MeditationDbData> {
     this.type = const Value.absent(),
   });
   MeditationDbCompanion.insert({
-    @required int id,
+    this.id = const Value.absent(),
     this.year = const Value.absent(),
     this.type = const Value.absent(),
-  }) : id = Value(id);
+  });
+  static Insertable<MeditationDbData> custom({
+    Expression<int> id,
+    Expression<int> year,
+    Expression<String> type,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (year != null) 'year': year,
+      if (type != null) 'type': type,
+    });
+  }
+
   MeditationDbCompanion copyWith(
       {Value<int> id, Value<int> year, Value<String> type}) {
     return MeditationDbCompanion(
@@ -102,6 +128,31 @@ class MeditationDbCompanion extends UpdateCompanion<MeditationDbData> {
       year: year ?? this.year,
       type: type ?? this.type,
     );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (year.present) {
+      map['year'] = Variable<int>(year.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeditationDbCompanion(')
+          ..write('id: $id, ')
+          ..write('year: $year, ')
+          ..write('type: $type')
+          ..write(')'))
+        .toString();
   }
 }
 
@@ -155,21 +206,20 @@ class $MeditationDbTable extends MeditationDb
   @override
   final String actualTableName = 'meditation_db';
   @override
-  VerificationContext validateIntegrity(MeditationDbCompanion d,
+  VerificationContext validateIntegrity(Insertable<MeditationDbData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
-    if (d.id.present) {
-      context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
-    if (d.year.present) {
+    if (data.containsKey('year')) {
       context.handle(
-          _yearMeta, year.isAcceptableValue(d.year.value, _yearMeta));
+          _yearMeta, year.isAcceptableOrUnknown(data['year'], _yearMeta));
     }
-    if (d.type.present) {
+    if (data.containsKey('type')) {
       context.handle(
-          _typeMeta, type.isAcceptableValue(d.type.value, _typeMeta));
+          _typeMeta, type.isAcceptableOrUnknown(data['type'], _typeMeta));
     }
     return context;
   }
@@ -180,21 +230,6 @@ class $MeditationDbTable extends MeditationDb
   MeditationDbData map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return MeditationDbData.fromData(data, _db, prefix: effectivePrefix);
-  }
-
-  @override
-  Map<String, Variable> entityToSql(MeditationDbCompanion d) {
-    final map = <String, Variable>{};
-    if (d.id.present) {
-      map['id'] = Variable<int, IntType>(d.id.value);
-    }
-    if (d.year.present) {
-      map['year'] = Variable<int, IntType>(d.year.value);
-    }
-    if (d.type.present) {
-      map['type'] = Variable<String, StringType>(d.type.value);
-    }
-    return map;
   }
 
   @override
@@ -242,6 +277,55 @@ class MeditationLanguageVersionDbData extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}meditation_id']),
     );
   }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || languageName != null) {
+      map['language_name'] = Variable<String>(languageName);
+    }
+    if (!nullToAbsent || languageCode != null) {
+      map['language_code'] = Variable<String>(languageCode);
+    }
+    if (!nullToAbsent || title != null) {
+      map['title'] = Variable<String>(title);
+    }
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || author != null) {
+      map['author'] = Variable<String>(author);
+    }
+    if (!nullToAbsent || authorBio != null) {
+      map['author_bio'] = Variable<String>(authorBio);
+    }
+    if (!nullToAbsent || meditationId != null) {
+      map['meditation_id'] = Variable<int>(meditationId);
+    }
+    return map;
+  }
+
+  MeditationLanguageVersionDbCompanion toCompanion(bool nullToAbsent) {
+    return MeditationLanguageVersionDbCompanion(
+      languageName: languageName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(languageName),
+      languageCode: languageCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(languageCode),
+      title:
+          title == null && nullToAbsent ? const Value.absent() : Value(title),
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      author:
+          author == null && nullToAbsent ? const Value.absent() : Value(author),
+      authorBio: authorBio == null && nullToAbsent
+          ? const Value.absent()
+          : Value(authorBio),
+      meditationId: meditationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(meditationId),
+    );
+  }
+
   factory MeditationLanguageVersionDbData.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -267,29 +351,6 @@ class MeditationLanguageVersionDbData extends DataClass
       'authorBio': serializer.toJson<String>(authorBio),
       'meditationId': serializer.toJson<int>(meditationId),
     };
-  }
-
-  @override
-  MeditationLanguageVersionDbCompanion createCompanion(bool nullToAbsent) {
-    return MeditationLanguageVersionDbCompanion(
-      languageName: languageName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(languageName),
-      languageCode: languageCode == null && nullToAbsent
-          ? const Value.absent()
-          : Value(languageCode),
-      title:
-          title == null && nullToAbsent ? const Value.absent() : Value(title),
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      author:
-          author == null && nullToAbsent ? const Value.absent() : Value(author),
-      authorBio: authorBio == null && nullToAbsent
-          ? const Value.absent()
-          : Value(authorBio),
-      meditationId: meditationId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(meditationId),
-    );
   }
 
   MeditationLanguageVersionDbData copyWith(
@@ -369,12 +430,31 @@ class MeditationLanguageVersionDbCompanion
     this.languageName = const Value.absent(),
     this.languageCode = const Value.absent(),
     this.title = const Value.absent(),
-    @required int id,
+    this.id = const Value.absent(),
     this.author = const Value.absent(),
     this.authorBio = const Value.absent(),
     @required int meditationId,
-  })  : id = Value(id),
-        meditationId = Value(meditationId);
+  }) : meditationId = Value(meditationId);
+  static Insertable<MeditationLanguageVersionDbData> custom({
+    Expression<String> languageName,
+    Expression<String> languageCode,
+    Expression<String> title,
+    Expression<int> id,
+    Expression<String> author,
+    Expression<String> authorBio,
+    Expression<int> meditationId,
+  }) {
+    return RawValuesInsertable({
+      if (languageName != null) 'language_name': languageName,
+      if (languageCode != null) 'language_code': languageCode,
+      if (title != null) 'title': title,
+      if (id != null) 'id': id,
+      if (author != null) 'author': author,
+      if (authorBio != null) 'author_bio': authorBio,
+      if (meditationId != null) 'meditation_id': meditationId,
+    });
+  }
+
   MeditationLanguageVersionDbCompanion copyWith(
       {Value<String> languageName,
       Value<String> languageCode,
@@ -392,6 +472,47 @@ class MeditationLanguageVersionDbCompanion
       authorBio: authorBio ?? this.authorBio,
       meditationId: meditationId ?? this.meditationId,
     );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (languageName.present) {
+      map['language_name'] = Variable<String>(languageName.value);
+    }
+    if (languageCode.present) {
+      map['language_code'] = Variable<String>(languageCode.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (author.present) {
+      map['author'] = Variable<String>(author.value);
+    }
+    if (authorBio.present) {
+      map['author_bio'] = Variable<String>(authorBio.value);
+    }
+    if (meditationId.present) {
+      map['meditation_id'] = Variable<int>(meditationId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeditationLanguageVersionDbCompanion(')
+          ..write('languageName: $languageName, ')
+          ..write('languageCode: $languageCode, ')
+          ..write('title: $title, ')
+          ..write('id: $id, ')
+          ..write('author: $author, ')
+          ..write('authorBio: $authorBio, ')
+          ..write('meditationId: $meditationId')
+          ..write(')'))
+        .toString();
   }
 }
 
@@ -502,43 +623,43 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
   @override
   final String actualTableName = 'meditation_language_version_db';
   @override
-  VerificationContext validateIntegrity(MeditationLanguageVersionDbCompanion d,
+  VerificationContext validateIntegrity(
+      Insertable<MeditationLanguageVersionDbData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
-    if (d.languageName.present) {
+    final data = instance.toColumns(true);
+    if (data.containsKey('language_name')) {
       context.handle(
           _languageNameMeta,
-          languageName.isAcceptableValue(
-              d.languageName.value, _languageNameMeta));
+          languageName.isAcceptableOrUnknown(
+              data['language_name'], _languageNameMeta));
     }
-    if (d.languageCode.present) {
+    if (data.containsKey('language_code')) {
       context.handle(
           _languageCodeMeta,
-          languageCode.isAcceptableValue(
-              d.languageCode.value, _languageCodeMeta));
+          languageCode.isAcceptableOrUnknown(
+              data['language_code'], _languageCodeMeta));
     }
-    if (d.title.present) {
+    if (data.containsKey('title')) {
       context.handle(
-          _titleMeta, title.isAcceptableValue(d.title.value, _titleMeta));
+          _titleMeta, title.isAcceptableOrUnknown(data['title'], _titleMeta));
     }
-    if (d.id.present) {
-      context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
-    if (d.author.present) {
-      context.handle(
-          _authorMeta, author.isAcceptableValue(d.author.value, _authorMeta));
+    if (data.containsKey('author')) {
+      context.handle(_authorMeta,
+          author.isAcceptableOrUnknown(data['author'], _authorMeta));
     }
-    if (d.authorBio.present) {
+    if (data.containsKey('author_bio')) {
       context.handle(_authorBioMeta,
-          authorBio.isAcceptableValue(d.authorBio.value, _authorBioMeta));
+          authorBio.isAcceptableOrUnknown(data['author_bio'], _authorBioMeta));
     }
-    if (d.meditationId.present) {
+    if (data.containsKey('meditation_id')) {
       context.handle(
           _meditationIdMeta,
-          meditationId.isAcceptableValue(
-              d.meditationId.value, _meditationIdMeta));
+          meditationId.isAcceptableOrUnknown(
+              data['meditation_id'], _meditationIdMeta));
     } else if (isInserting) {
       context.missing(_meditationIdMeta);
     }
@@ -553,33 +674,6 @@ class $MeditationLanguageVersionDbTable extends MeditationLanguageVersionDb
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return MeditationLanguageVersionDbData.fromData(data, _db,
         prefix: effectivePrefix);
-  }
-
-  @override
-  Map<String, Variable> entityToSql(MeditationLanguageVersionDbCompanion d) {
-    final map = <String, Variable>{};
-    if (d.languageName.present) {
-      map['language_name'] = Variable<String, StringType>(d.languageName.value);
-    }
-    if (d.languageCode.present) {
-      map['language_code'] = Variable<String, StringType>(d.languageCode.value);
-    }
-    if (d.title.present) {
-      map['title'] = Variable<String, StringType>(d.title.value);
-    }
-    if (d.id.present) {
-      map['id'] = Variable<int, IntType>(d.id.value);
-    }
-    if (d.author.present) {
-      map['author'] = Variable<String, StringType>(d.author.value);
-    }
-    if (d.authorBio.present) {
-      map['author_bio'] = Variable<String, StringType>(d.authorBio.value);
-    }
-    if (d.meditationId.present) {
-      map['meditation_id'] = Variable<int, IntType>(d.meditationId.value);
-    }
-    return map;
   }
 
   @override
@@ -604,6 +698,29 @@ class GroupDbData extends DataClass implements Insertable<GroupDbData> {
           .mapFromDatabaseResponse(data['${effectivePrefix}group_name']),
     );
   }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || groupId != null) {
+      map['group_id'] = Variable<int>(groupId);
+    }
+    if (!nullToAbsent || groupName != null) {
+      map['group_name'] = Variable<String>(groupName);
+    }
+    return map;
+  }
+
+  GroupDbCompanion toCompanion(bool nullToAbsent) {
+    return GroupDbCompanion(
+      groupId: groupId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(groupId),
+      groupName: groupName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(groupName),
+    );
+  }
+
   factory GroupDbData.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -619,18 +736,6 @@ class GroupDbData extends DataClass implements Insertable<GroupDbData> {
       'groupId': serializer.toJson<int>(groupId),
       'groupName': serializer.toJson<String>(groupName),
     };
-  }
-
-  @override
-  GroupDbCompanion createCompanion(bool nullToAbsent) {
-    return GroupDbCompanion(
-      groupId: groupId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(groupId),
-      groupName: groupName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(groupName),
-    );
   }
 
   GroupDbData copyWith({int groupId, String groupName}) => GroupDbData(
@@ -664,14 +769,45 @@ class GroupDbCompanion extends UpdateCompanion<GroupDbData> {
     this.groupName = const Value.absent(),
   });
   GroupDbCompanion.insert({
-    @required int groupId,
+    this.groupId = const Value.absent(),
     this.groupName = const Value.absent(),
-  }) : groupId = Value(groupId);
+  });
+  static Insertable<GroupDbData> custom({
+    Expression<int> groupId,
+    Expression<String> groupName,
+  }) {
+    return RawValuesInsertable({
+      if (groupId != null) 'group_id': groupId,
+      if (groupName != null) 'group_name': groupName,
+    });
+  }
+
   GroupDbCompanion copyWith({Value<int> groupId, Value<String> groupName}) {
     return GroupDbCompanion(
       groupId: groupId ?? this.groupId,
       groupName: groupName ?? this.groupName,
     );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (groupId.present) {
+      map['group_id'] = Variable<int>(groupId.value);
+    }
+    if (groupName.present) {
+      map['group_name'] = Variable<String>(groupName.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GroupDbCompanion(')
+          ..write('groupId: $groupId, ')
+          ..write('groupName: $groupName')
+          ..write(')'))
+        .toString();
   }
 }
 
@@ -712,18 +848,17 @@ class $GroupDbTable extends GroupDb with TableInfo<$GroupDbTable, GroupDbData> {
   @override
   final String actualTableName = 'group_db';
   @override
-  VerificationContext validateIntegrity(GroupDbCompanion d,
+  VerificationContext validateIntegrity(Insertable<GroupDbData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
-    if (d.groupId.present) {
+    final data = instance.toColumns(true);
+    if (data.containsKey('group_id')) {
       context.handle(_groupIdMeta,
-          groupId.isAcceptableValue(d.groupId.value, _groupIdMeta));
-    } else if (isInserting) {
-      context.missing(_groupIdMeta);
+          groupId.isAcceptableOrUnknown(data['group_id'], _groupIdMeta));
     }
-    if (d.groupName.present) {
+    if (data.containsKey('group_name')) {
       context.handle(_groupNameMeta,
-          groupName.isAcceptableValue(d.groupName.value, _groupNameMeta));
+          groupName.isAcceptableOrUnknown(data['group_name'], _groupNameMeta));
     }
     return context;
   }
@@ -734,18 +869,6 @@ class $GroupDbTable extends GroupDb with TableInfo<$GroupDbTable, GroupDbData> {
   GroupDbData map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return GroupDbData.fromData(data, _db, prefix: effectivePrefix);
-  }
-
-  @override
-  Map<String, Variable> entityToSql(GroupDbCompanion d) {
-    final map = <String, Variable>{};
-    if (d.groupId.present) {
-      map['group_id'] = Variable<int, IntType>(d.groupId.value);
-    }
-    if (d.groupName.present) {
-      map['group_name'] = Variable<String, StringType>(d.groupName.value);
-    }
-    return map;
   }
 
   @override
@@ -773,6 +896,34 @@ class AreaDbData extends DataClass implements Insertable<AreaDbData> {
           intType.mapFromDatabaseResponse(data['${effectivePrefix}group_id']),
     );
   }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || areaId != null) {
+      map['area_id'] = Variable<int>(areaId);
+    }
+    if (!nullToAbsent || areaName != null) {
+      map['area_name'] = Variable<String>(areaName);
+    }
+    if (!nullToAbsent || groupId != null) {
+      map['group_id'] = Variable<int>(groupId);
+    }
+    return map;
+  }
+
+  AreaDbCompanion toCompanion(bool nullToAbsent) {
+    return AreaDbCompanion(
+      areaId:
+          areaId == null && nullToAbsent ? const Value.absent() : Value(areaId),
+      areaName: areaName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(areaName),
+      groupId: groupId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(groupId),
+    );
+  }
+
   factory AreaDbData.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -790,20 +941,6 @@ class AreaDbData extends DataClass implements Insertable<AreaDbData> {
       'areaName': serializer.toJson<String>(areaName),
       'groupId': serializer.toJson<int>(groupId),
     };
-  }
-
-  @override
-  AreaDbCompanion createCompanion(bool nullToAbsent) {
-    return AreaDbCompanion(
-      areaId:
-          areaId == null && nullToAbsent ? const Value.absent() : Value(areaId),
-      areaName: areaName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(areaName),
-      groupId: groupId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(groupId),
-    );
   }
 
   AreaDbData copyWith({int areaId, String areaName, int groupId}) => AreaDbData(
@@ -843,11 +980,22 @@ class AreaDbCompanion extends UpdateCompanion<AreaDbData> {
     this.groupId = const Value.absent(),
   });
   AreaDbCompanion.insert({
-    @required int areaId,
+    this.areaId = const Value.absent(),
     this.areaName = const Value.absent(),
     @required int groupId,
-  })  : areaId = Value(areaId),
-        groupId = Value(groupId);
+  }) : groupId = Value(groupId);
+  static Insertable<AreaDbData> custom({
+    Expression<int> areaId,
+    Expression<String> areaName,
+    Expression<int> groupId,
+  }) {
+    return RawValuesInsertable({
+      if (areaId != null) 'area_id': areaId,
+      if (areaName != null) 'area_name': areaName,
+      if (groupId != null) 'group_id': groupId,
+    });
+  }
+
   AreaDbCompanion copyWith(
       {Value<int> areaId, Value<String> areaName, Value<int> groupId}) {
     return AreaDbCompanion(
@@ -855,6 +1003,31 @@ class AreaDbCompanion extends UpdateCompanion<AreaDbData> {
       areaName: areaName ?? this.areaName,
       groupId: groupId ?? this.groupId,
     );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (areaId.present) {
+      map['area_id'] = Variable<int>(areaId.value);
+    }
+    if (areaName.present) {
+      map['area_name'] = Variable<String>(areaName.value);
+    }
+    if (groupId.present) {
+      map['group_id'] = Variable<int>(groupId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AreaDbCompanion(')
+          ..write('areaId: $areaId, ')
+          ..write('areaName: $areaName, ')
+          ..write('groupId: $groupId')
+          ..write(')'))
+        .toString();
   }
 }
 
@@ -907,22 +1080,21 @@ class $AreaDbTable extends AreaDb with TableInfo<$AreaDbTable, AreaDbData> {
   @override
   final String actualTableName = 'area_db';
   @override
-  VerificationContext validateIntegrity(AreaDbCompanion d,
+  VerificationContext validateIntegrity(Insertable<AreaDbData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
-    if (d.areaId.present) {
-      context.handle(
-          _areaIdMeta, areaId.isAcceptableValue(d.areaId.value, _areaIdMeta));
-    } else if (isInserting) {
-      context.missing(_areaIdMeta);
+    final data = instance.toColumns(true);
+    if (data.containsKey('area_id')) {
+      context.handle(_areaIdMeta,
+          areaId.isAcceptableOrUnknown(data['area_id'], _areaIdMeta));
     }
-    if (d.areaName.present) {
+    if (data.containsKey('area_name')) {
       context.handle(_areaNameMeta,
-          areaName.isAcceptableValue(d.areaName.value, _areaNameMeta));
+          areaName.isAcceptableOrUnknown(data['area_name'], _areaNameMeta));
     }
-    if (d.groupId.present) {
+    if (data.containsKey('group_id')) {
       context.handle(_groupIdMeta,
-          groupId.isAcceptableValue(d.groupId.value, _groupIdMeta));
+          groupId.isAcceptableOrUnknown(data['group_id'], _groupIdMeta));
     } else if (isInserting) {
       context.missing(_groupIdMeta);
     }
@@ -935,21 +1107,6 @@ class $AreaDbTable extends AreaDb with TableInfo<$AreaDbTable, AreaDbData> {
   AreaDbData map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return AreaDbData.fromData(data, _db, prefix: effectivePrefix);
-  }
-
-  @override
-  Map<String, Variable> entityToSql(AreaDbCompanion d) {
-    final map = <String, Variable>{};
-    if (d.areaId.present) {
-      map['area_id'] = Variable<int, IntType>(d.areaId.value);
-    }
-    if (d.areaName.present) {
-      map['area_name'] = Variable<String, StringType>(d.areaName.value);
-    }
-    if (d.groupId.present) {
-      map['group_id'] = Variable<int, IntType>(d.groupId.value);
-    }
-    return map;
   }
 
   @override
@@ -1012,44 +1169,46 @@ class RouteDbData extends DataClass implements Insertable<RouteDbData> {
           intType.mapFromDatabaseResponse(data['${effectivePrefix}area_id']),
     );
   }
-  factory RouteDbData.fromJson(Map<String, dynamic> json,
-      {ValueSerializer serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
-    return RouteDbData(
-      routeId: serializer.fromJson<int>(json['routeId']),
-      routeName: serializer.fromJson<String>(json['routeName']),
-      routeFrom: serializer.fromJson<String>(json['routeFrom']),
-      routeTo: serializer.fromJson<String>(json['routeTo']),
-      routeLenght: serializer.fromJson<String>(json['routeLenght']),
-      routeAcent: serializer.fromJson<String>(json['routeAcent']),
-      routeKmlFile: serializer.fromJson<String>(json['routeKmlFile']),
-      routeDescriptionFile:
-          serializer.fromJson<String>(json['routeDescriptionFile']),
-      routeDescription: serializer.fromJson<String>(json['routeDescription']),
-      routeLastUpdate: serializer.fromJson<String>(json['routeLastUpdate']),
-      areaId: serializer.fromJson<int>(json['areaId']),
-    );
-  }
   @override
-  Map<String, dynamic> toJson({ValueSerializer serializer}) {
-    serializer ??= moorRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'routeId': serializer.toJson<int>(routeId),
-      'routeName': serializer.toJson<String>(routeName),
-      'routeFrom': serializer.toJson<String>(routeFrom),
-      'routeTo': serializer.toJson<String>(routeTo),
-      'routeLenght': serializer.toJson<String>(routeLenght),
-      'routeAcent': serializer.toJson<String>(routeAcent),
-      'routeKmlFile': serializer.toJson<String>(routeKmlFile),
-      'routeDescriptionFile': serializer.toJson<String>(routeDescriptionFile),
-      'routeDescription': serializer.toJson<String>(routeDescription),
-      'routeLastUpdate': serializer.toJson<String>(routeLastUpdate),
-      'areaId': serializer.toJson<int>(areaId),
-    };
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || routeId != null) {
+      map['route_id'] = Variable<int>(routeId);
+    }
+    if (!nullToAbsent || routeName != null) {
+      map['route_name'] = Variable<String>(routeName);
+    }
+    if (!nullToAbsent || routeFrom != null) {
+      map['route_from'] = Variable<String>(routeFrom);
+    }
+    if (!nullToAbsent || routeTo != null) {
+      map['route_to'] = Variable<String>(routeTo);
+    }
+    if (!nullToAbsent || routeLenght != null) {
+      map['route_lenght'] = Variable<String>(routeLenght);
+    }
+    if (!nullToAbsent || routeAcent != null) {
+      map['route_acent'] = Variable<String>(routeAcent);
+    }
+    if (!nullToAbsent || routeKmlFile != null) {
+      map['route_kml_file'] = Variable<String>(routeKmlFile);
+    }
+    if (!nullToAbsent || routeDescriptionFile != null) {
+      map['route_description_file'] = Variable<String>(routeDescriptionFile);
+    }
+    if (!nullToAbsent || routeDescription != null) {
+      map['route_description'] = Variable<String>(routeDescription);
+    }
+    if (!nullToAbsent || routeLastUpdate != null) {
+      map['route_last_update'] = Variable<String>(routeLastUpdate);
+    }
+    if (!nullToAbsent || areaId != null) {
+      map['area_id'] = Variable<int>(areaId);
+    }
+    return map;
   }
 
-  @override
-  RouteDbCompanion createCompanion(bool nullToAbsent) {
+  RouteDbCompanion toCompanion(bool nullToAbsent) {
     return RouteDbCompanion(
       routeId: routeId == null && nullToAbsent
           ? const Value.absent()
@@ -1084,6 +1243,42 @@ class RouteDbData extends DataClass implements Insertable<RouteDbData> {
       areaId:
           areaId == null && nullToAbsent ? const Value.absent() : Value(areaId),
     );
+  }
+
+  factory RouteDbData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return RouteDbData(
+      routeId: serializer.fromJson<int>(json['routeId']),
+      routeName: serializer.fromJson<String>(json['routeName']),
+      routeFrom: serializer.fromJson<String>(json['routeFrom']),
+      routeTo: serializer.fromJson<String>(json['routeTo']),
+      routeLenght: serializer.fromJson<String>(json['routeLenght']),
+      routeAcent: serializer.fromJson<String>(json['routeAcent']),
+      routeKmlFile: serializer.fromJson<String>(json['routeKmlFile']),
+      routeDescriptionFile:
+          serializer.fromJson<String>(json['routeDescriptionFile']),
+      routeDescription: serializer.fromJson<String>(json['routeDescription']),
+      routeLastUpdate: serializer.fromJson<String>(json['routeLastUpdate']),
+      areaId: serializer.fromJson<int>(json['areaId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'routeId': serializer.toJson<int>(routeId),
+      'routeName': serializer.toJson<String>(routeName),
+      'routeFrom': serializer.toJson<String>(routeFrom),
+      'routeTo': serializer.toJson<String>(routeTo),
+      'routeLenght': serializer.toJson<String>(routeLenght),
+      'routeAcent': serializer.toJson<String>(routeAcent),
+      'routeKmlFile': serializer.toJson<String>(routeKmlFile),
+      'routeDescriptionFile': serializer.toJson<String>(routeDescriptionFile),
+      'routeDescription': serializer.toJson<String>(routeDescription),
+      'routeLastUpdate': serializer.toJson<String>(routeLastUpdate),
+      'areaId': serializer.toJson<int>(areaId),
+    };
   }
 
   RouteDbData copyWith(
@@ -1193,7 +1388,7 @@ class RouteDbCompanion extends UpdateCompanion<RouteDbData> {
     this.areaId = const Value.absent(),
   });
   RouteDbCompanion.insert({
-    @required int routeId,
+    this.routeId = const Value.absent(),
     this.routeName = const Value.absent(),
     this.routeFrom = const Value.absent(),
     this.routeTo = const Value.absent(),
@@ -1204,8 +1399,36 @@ class RouteDbCompanion extends UpdateCompanion<RouteDbData> {
     this.routeDescription = const Value.absent(),
     this.routeLastUpdate = const Value.absent(),
     @required int areaId,
-  })  : routeId = Value(routeId),
-        areaId = Value(areaId);
+  }) : areaId = Value(areaId);
+  static Insertable<RouteDbData> custom({
+    Expression<int> routeId,
+    Expression<String> routeName,
+    Expression<String> routeFrom,
+    Expression<String> routeTo,
+    Expression<String> routeLenght,
+    Expression<String> routeAcent,
+    Expression<String> routeKmlFile,
+    Expression<String> routeDescriptionFile,
+    Expression<String> routeDescription,
+    Expression<String> routeLastUpdate,
+    Expression<int> areaId,
+  }) {
+    return RawValuesInsertable({
+      if (routeId != null) 'route_id': routeId,
+      if (routeName != null) 'route_name': routeName,
+      if (routeFrom != null) 'route_from': routeFrom,
+      if (routeTo != null) 'route_to': routeTo,
+      if (routeLenght != null) 'route_lenght': routeLenght,
+      if (routeAcent != null) 'route_acent': routeAcent,
+      if (routeKmlFile != null) 'route_kml_file': routeKmlFile,
+      if (routeDescriptionFile != null)
+        'route_description_file': routeDescriptionFile,
+      if (routeDescription != null) 'route_description': routeDescription,
+      if (routeLastUpdate != null) 'route_last_update': routeLastUpdate,
+      if (areaId != null) 'area_id': areaId,
+    });
+  }
+
   RouteDbCompanion copyWith(
       {Value<int> routeId,
       Value<String> routeName,
@@ -1231,6 +1454,64 @@ class RouteDbCompanion extends UpdateCompanion<RouteDbData> {
       routeLastUpdate: routeLastUpdate ?? this.routeLastUpdate,
       areaId: areaId ?? this.areaId,
     );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (routeId.present) {
+      map['route_id'] = Variable<int>(routeId.value);
+    }
+    if (routeName.present) {
+      map['route_name'] = Variable<String>(routeName.value);
+    }
+    if (routeFrom.present) {
+      map['route_from'] = Variable<String>(routeFrom.value);
+    }
+    if (routeTo.present) {
+      map['route_to'] = Variable<String>(routeTo.value);
+    }
+    if (routeLenght.present) {
+      map['route_lenght'] = Variable<String>(routeLenght.value);
+    }
+    if (routeAcent.present) {
+      map['route_acent'] = Variable<String>(routeAcent.value);
+    }
+    if (routeKmlFile.present) {
+      map['route_kml_file'] = Variable<String>(routeKmlFile.value);
+    }
+    if (routeDescriptionFile.present) {
+      map['route_description_file'] =
+          Variable<String>(routeDescriptionFile.value);
+    }
+    if (routeDescription.present) {
+      map['route_description'] = Variable<String>(routeDescription.value);
+    }
+    if (routeLastUpdate.present) {
+      map['route_last_update'] = Variable<String>(routeLastUpdate.value);
+    }
+    if (areaId.present) {
+      map['area_id'] = Variable<int>(areaId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('RouteDbCompanion(')
+          ..write('routeId: $routeId, ')
+          ..write('routeName: $routeName, ')
+          ..write('routeFrom: $routeFrom, ')
+          ..write('routeTo: $routeTo, ')
+          ..write('routeLenght: $routeLenght, ')
+          ..write('routeAcent: $routeAcent, ')
+          ..write('routeKmlFile: $routeKmlFile, ')
+          ..write('routeDescriptionFile: $routeDescriptionFile, ')
+          ..write('routeDescription: $routeDescription, ')
+          ..write('routeLastUpdate: $routeLastUpdate, ')
+          ..write('areaId: $areaId')
+          ..write(')'))
+        .toString();
   }
 }
 
@@ -1401,62 +1682,65 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
   @override
   final String actualTableName = 'route_db';
   @override
-  VerificationContext validateIntegrity(RouteDbCompanion d,
+  VerificationContext validateIntegrity(Insertable<RouteDbData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
-    if (d.routeId.present) {
+    final data = instance.toColumns(true);
+    if (data.containsKey('route_id')) {
       context.handle(_routeIdMeta,
-          routeId.isAcceptableValue(d.routeId.value, _routeIdMeta));
-    } else if (isInserting) {
-      context.missing(_routeIdMeta);
+          routeId.isAcceptableOrUnknown(data['route_id'], _routeIdMeta));
     }
-    if (d.routeName.present) {
+    if (data.containsKey('route_name')) {
       context.handle(_routeNameMeta,
-          routeName.isAcceptableValue(d.routeName.value, _routeNameMeta));
+          routeName.isAcceptableOrUnknown(data['route_name'], _routeNameMeta));
     }
-    if (d.routeFrom.present) {
+    if (data.containsKey('route_from')) {
       context.handle(_routeFromMeta,
-          routeFrom.isAcceptableValue(d.routeFrom.value, _routeFromMeta));
+          routeFrom.isAcceptableOrUnknown(data['route_from'], _routeFromMeta));
     }
-    if (d.routeTo.present) {
+    if (data.containsKey('route_to')) {
       context.handle(_routeToMeta,
-          routeTo.isAcceptableValue(d.routeTo.value, _routeToMeta));
+          routeTo.isAcceptableOrUnknown(data['route_to'], _routeToMeta));
     }
-    if (d.routeLenght.present) {
-      context.handle(_routeLenghtMeta,
-          routeLenght.isAcceptableValue(d.routeLenght.value, _routeLenghtMeta));
+    if (data.containsKey('route_lenght')) {
+      context.handle(
+          _routeLenghtMeta,
+          routeLenght.isAcceptableOrUnknown(
+              data['route_lenght'], _routeLenghtMeta));
     }
-    if (d.routeAcent.present) {
-      context.handle(_routeAcentMeta,
-          routeAcent.isAcceptableValue(d.routeAcent.value, _routeAcentMeta));
+    if (data.containsKey('route_acent')) {
+      context.handle(
+          _routeAcentMeta,
+          routeAcent.isAcceptableOrUnknown(
+              data['route_acent'], _routeAcentMeta));
     }
-    if (d.routeKmlFile.present) {
+    if (data.containsKey('route_kml_file')) {
       context.handle(
           _routeKmlFileMeta,
-          routeKmlFile.isAcceptableValue(
-              d.routeKmlFile.value, _routeKmlFileMeta));
+          routeKmlFile.isAcceptableOrUnknown(
+              data['route_kml_file'], _routeKmlFileMeta));
     }
-    if (d.routeDescriptionFile.present) {
+    if (data.containsKey('route_description_file')) {
       context.handle(
           _routeDescriptionFileMeta,
-          routeDescriptionFile.isAcceptableValue(
-              d.routeDescriptionFile.value, _routeDescriptionFileMeta));
+          routeDescriptionFile.isAcceptableOrUnknown(
+              data['route_description_file'], _routeDescriptionFileMeta));
     }
-    if (d.routeDescription.present) {
+    if (data.containsKey('route_description')) {
       context.handle(
           _routeDescriptionMeta,
-          routeDescription.isAcceptableValue(
-              d.routeDescription.value, _routeDescriptionMeta));
+          routeDescription.isAcceptableOrUnknown(
+              data['route_description'], _routeDescriptionMeta));
     }
-    if (d.routeLastUpdate.present) {
+    if (data.containsKey('route_last_update')) {
       context.handle(
           _routeLastUpdateMeta,
-          routeLastUpdate.isAcceptableValue(
-              d.routeLastUpdate.value, _routeLastUpdateMeta));
+          routeLastUpdate.isAcceptableOrUnknown(
+              data['route_last_update'], _routeLastUpdateMeta));
     }
-    if (d.areaId.present) {
-      context.handle(
-          _areaIdMeta, areaId.isAcceptableValue(d.areaId.value, _areaIdMeta));
+    if (data.containsKey('area_id')) {
+      context.handle(_areaIdMeta,
+          areaId.isAcceptableOrUnknown(data['area_id'], _areaIdMeta));
     } else if (isInserting) {
       context.missing(_areaIdMeta);
     }
@@ -1469,49 +1753,6 @@ class $RouteDbTable extends RouteDb with TableInfo<$RouteDbTable, RouteDbData> {
   RouteDbData map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return RouteDbData.fromData(data, _db, prefix: effectivePrefix);
-  }
-
-  @override
-  Map<String, Variable> entityToSql(RouteDbCompanion d) {
-    final map = <String, Variable>{};
-    if (d.routeId.present) {
-      map['route_id'] = Variable<int, IntType>(d.routeId.value);
-    }
-    if (d.routeName.present) {
-      map['route_name'] = Variable<String, StringType>(d.routeName.value);
-    }
-    if (d.routeFrom.present) {
-      map['route_from'] = Variable<String, StringType>(d.routeFrom.value);
-    }
-    if (d.routeTo.present) {
-      map['route_to'] = Variable<String, StringType>(d.routeTo.value);
-    }
-    if (d.routeLenght.present) {
-      map['route_lenght'] = Variable<String, StringType>(d.routeLenght.value);
-    }
-    if (d.routeAcent.present) {
-      map['route_acent'] = Variable<String, StringType>(d.routeAcent.value);
-    }
-    if (d.routeKmlFile.present) {
-      map['route_kml_file'] =
-          Variable<String, StringType>(d.routeKmlFile.value);
-    }
-    if (d.routeDescriptionFile.present) {
-      map['route_description_file'] =
-          Variable<String, StringType>(d.routeDescriptionFile.value);
-    }
-    if (d.routeDescription.present) {
-      map['route_description'] =
-          Variable<String, StringType>(d.routeDescription.value);
-    }
-    if (d.routeLastUpdate.present) {
-      map['route_last_update'] =
-          Variable<String, StringType>(d.routeLastUpdate.value);
-    }
-    if (d.areaId.present) {
-      map['area_id'] = Variable<int, IntType>(d.areaId.value);
-    }
-    return map;
   }
 
   @override
@@ -1566,6 +1807,67 @@ class StationDbData extends DataClass implements Insertable<StationDbData> {
           .mapFromDatabaseResponse(data['${effectivePrefix}meditation_id']),
     );
   }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || title != null) {
+      map['title'] = Variable<String>(title);
+    }
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || author != null) {
+      map['author'] = Variable<String>(author);
+    }
+    if (!nullToAbsent || authorBio != null) {
+      map['author_bio'] = Variable<String>(authorBio);
+    }
+    if (!nullToAbsent || stationId != null) {
+      map['station_id'] = Variable<int>(stationId);
+    }
+    if (!nullToAbsent || placeId != null) {
+      map['place_id'] = Variable<String>(placeId);
+    }
+    if (!nullToAbsent || audioFileUrl != null) {
+      map['audio_file_url'] = Variable<String>(audioFileUrl);
+    }
+    if (!nullToAbsent || stationText != null) {
+      map['station_text'] = Variable<String>(stationText);
+    }
+    if (!nullToAbsent || meditationId != null) {
+      map['meditation_id'] = Variable<int>(meditationId);
+    }
+    return map;
+  }
+
+  StationDbCompanion toCompanion(bool nullToAbsent) {
+    return StationDbCompanion(
+      title:
+          title == null && nullToAbsent ? const Value.absent() : Value(title),
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      author:
+          author == null && nullToAbsent ? const Value.absent() : Value(author),
+      authorBio: authorBio == null && nullToAbsent
+          ? const Value.absent()
+          : Value(authorBio),
+      stationId: stationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(stationId),
+      placeId: placeId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(placeId),
+      audioFileUrl: audioFileUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(audioFileUrl),
+      stationText: stationText == null && nullToAbsent
+          ? const Value.absent()
+          : Value(stationText),
+      meditationId: meditationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(meditationId),
+    );
+  }
+
   factory StationDbData.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
@@ -1595,35 +1897,6 @@ class StationDbData extends DataClass implements Insertable<StationDbData> {
       'stationText': serializer.toJson<String>(stationText),
       'meditationId': serializer.toJson<int>(meditationId),
     };
-  }
-
-  @override
-  StationDbCompanion createCompanion(bool nullToAbsent) {
-    return StationDbCompanion(
-      title:
-          title == null && nullToAbsent ? const Value.absent() : Value(title),
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      author:
-          author == null && nullToAbsent ? const Value.absent() : Value(author),
-      authorBio: authorBio == null && nullToAbsent
-          ? const Value.absent()
-          : Value(authorBio),
-      stationId: stationId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(stationId),
-      placeId: placeId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(placeId),
-      audioFileUrl: audioFileUrl == null && nullToAbsent
-          ? const Value.absent()
-          : Value(audioFileUrl),
-      stationText: stationText == null && nullToAbsent
-          ? const Value.absent()
-          : Value(stationText),
-      meditationId: meditationId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(meditationId),
-    );
   }
 
   StationDbData copyWith(
@@ -1718,7 +1991,7 @@ class StationDbCompanion extends UpdateCompanion<StationDbData> {
   });
   StationDbCompanion.insert({
     this.title = const Value.absent(),
-    @required int id,
+    this.id = const Value.absent(),
     this.author = const Value.absent(),
     this.authorBio = const Value.absent(),
     this.stationId = const Value.absent(),
@@ -1726,8 +1999,31 @@ class StationDbCompanion extends UpdateCompanion<StationDbData> {
     this.audioFileUrl = const Value.absent(),
     this.stationText = const Value.absent(),
     @required int meditationId,
-  })  : id = Value(id),
-        meditationId = Value(meditationId);
+  }) : meditationId = Value(meditationId);
+  static Insertable<StationDbData> custom({
+    Expression<String> title,
+    Expression<int> id,
+    Expression<String> author,
+    Expression<String> authorBio,
+    Expression<int> stationId,
+    Expression<String> placeId,
+    Expression<String> audioFileUrl,
+    Expression<String> stationText,
+    Expression<int> meditationId,
+  }) {
+    return RawValuesInsertable({
+      if (title != null) 'title': title,
+      if (id != null) 'id': id,
+      if (author != null) 'author': author,
+      if (authorBio != null) 'author_bio': authorBio,
+      if (stationId != null) 'station_id': stationId,
+      if (placeId != null) 'place_id': placeId,
+      if (audioFileUrl != null) 'audio_file_url': audioFileUrl,
+      if (stationText != null) 'station_text': stationText,
+      if (meditationId != null) 'meditation_id': meditationId,
+    });
+  }
+
   StationDbCompanion copyWith(
       {Value<String> title,
       Value<int> id,
@@ -1749,6 +2045,55 @@ class StationDbCompanion extends UpdateCompanion<StationDbData> {
       stationText: stationText ?? this.stationText,
       meditationId: meditationId ?? this.meditationId,
     );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (author.present) {
+      map['author'] = Variable<String>(author.value);
+    }
+    if (authorBio.present) {
+      map['author_bio'] = Variable<String>(authorBio.value);
+    }
+    if (stationId.present) {
+      map['station_id'] = Variable<int>(stationId.value);
+    }
+    if (placeId.present) {
+      map['place_id'] = Variable<String>(placeId.value);
+    }
+    if (audioFileUrl.present) {
+      map['audio_file_url'] = Variable<String>(audioFileUrl.value);
+    }
+    if (stationText.present) {
+      map['station_text'] = Variable<String>(stationText.value);
+    }
+    if (meditationId.present) {
+      map['meditation_id'] = Variable<int>(meditationId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('StationDbCompanion(')
+          ..write('title: $title, ')
+          ..write('id: $id, ')
+          ..write('author: $author, ')
+          ..write('authorBio: $authorBio, ')
+          ..write('stationId: $stationId, ')
+          ..write('placeId: $placeId, ')
+          ..write('audioFileUrl: $audioFileUrl, ')
+          ..write('stationText: $stationText, ')
+          ..write('meditationId: $meditationId')
+          ..write(')'))
+        .toString();
   }
 }
 
@@ -1890,49 +2235,50 @@ class $StationDbTable extends StationDb
   @override
   final String actualTableName = 'station_db';
   @override
-  VerificationContext validateIntegrity(StationDbCompanion d,
+  VerificationContext validateIntegrity(Insertable<StationDbData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
-    if (d.title.present) {
+    final data = instance.toColumns(true);
+    if (data.containsKey('title')) {
       context.handle(
-          _titleMeta, title.isAcceptableValue(d.title.value, _titleMeta));
+          _titleMeta, title.isAcceptableOrUnknown(data['title'], _titleMeta));
     }
-    if (d.id.present) {
-      context.handle(_idMeta, id.isAcceptableValue(d.id.value, _idMeta));
-    } else if (isInserting) {
-      context.missing(_idMeta);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
-    if (d.author.present) {
-      context.handle(
-          _authorMeta, author.isAcceptableValue(d.author.value, _authorMeta));
+    if (data.containsKey('author')) {
+      context.handle(_authorMeta,
+          author.isAcceptableOrUnknown(data['author'], _authorMeta));
     }
-    if (d.authorBio.present) {
+    if (data.containsKey('author_bio')) {
       context.handle(_authorBioMeta,
-          authorBio.isAcceptableValue(d.authorBio.value, _authorBioMeta));
+          authorBio.isAcceptableOrUnknown(data['author_bio'], _authorBioMeta));
     }
-    if (d.stationId.present) {
+    if (data.containsKey('station_id')) {
       context.handle(_stationIdMeta,
-          stationId.isAcceptableValue(d.stationId.value, _stationIdMeta));
+          stationId.isAcceptableOrUnknown(data['station_id'], _stationIdMeta));
     }
-    if (d.placeId.present) {
+    if (data.containsKey('place_id')) {
       context.handle(_placeIdMeta,
-          placeId.isAcceptableValue(d.placeId.value, _placeIdMeta));
+          placeId.isAcceptableOrUnknown(data['place_id'], _placeIdMeta));
     }
-    if (d.audioFileUrl.present) {
+    if (data.containsKey('audio_file_url')) {
       context.handle(
           _audioFileUrlMeta,
-          audioFileUrl.isAcceptableValue(
-              d.audioFileUrl.value, _audioFileUrlMeta));
+          audioFileUrl.isAcceptableOrUnknown(
+              data['audio_file_url'], _audioFileUrlMeta));
     }
-    if (d.stationText.present) {
-      context.handle(_stationTextMeta,
-          stationText.isAcceptableValue(d.stationText.value, _stationTextMeta));
+    if (data.containsKey('station_text')) {
+      context.handle(
+          _stationTextMeta,
+          stationText.isAcceptableOrUnknown(
+              data['station_text'], _stationTextMeta));
     }
-    if (d.meditationId.present) {
+    if (data.containsKey('meditation_id')) {
       context.handle(
           _meditationIdMeta,
-          meditationId.isAcceptableValue(
-              d.meditationId.value, _meditationIdMeta));
+          meditationId.isAcceptableOrUnknown(
+              data['meditation_id'], _meditationIdMeta));
     } else if (isInserting) {
       context.missing(_meditationIdMeta);
     }
@@ -1945,40 +2291,6 @@ class $StationDbTable extends StationDb
   StationDbData map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
     return StationDbData.fromData(data, _db, prefix: effectivePrefix);
-  }
-
-  @override
-  Map<String, Variable> entityToSql(StationDbCompanion d) {
-    final map = <String, Variable>{};
-    if (d.title.present) {
-      map['title'] = Variable<String, StringType>(d.title.value);
-    }
-    if (d.id.present) {
-      map['id'] = Variable<int, IntType>(d.id.value);
-    }
-    if (d.author.present) {
-      map['author'] = Variable<String, StringType>(d.author.value);
-    }
-    if (d.authorBio.present) {
-      map['author_bio'] = Variable<String, StringType>(d.authorBio.value);
-    }
-    if (d.stationId.present) {
-      map['station_id'] = Variable<int, IntType>(d.stationId.value);
-    }
-    if (d.placeId.present) {
-      map['place_id'] = Variable<String, StringType>(d.placeId.value);
-    }
-    if (d.audioFileUrl.present) {
-      map['audio_file_url'] =
-          Variable<String, StringType>(d.audioFileUrl.value);
-    }
-    if (d.stationText.present) {
-      map['station_text'] = Variable<String, StringType>(d.stationText.value);
-    }
-    if (d.meditationId.present) {
-      map['meditation_id'] = Variable<int, IntType>(d.meditationId.value);
-    }
-    return map;
   }
 
   @override
