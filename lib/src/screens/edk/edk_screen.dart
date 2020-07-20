@@ -6,7 +6,7 @@ class EdkScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Center(
-        child: Text(EDKLocalizations.of(context).edk),
+        child: Text(EDKLocalizations.of(context).edk()),
       ),
     );
   }

@@ -1,42 +1,20 @@
+import 'package:edk_mobile_v3/src/i18n/localized_values.dart';
 import 'package:flutter/material.dart';
 
 class EDKLocalizations {
-  EDKLocalizations(this.locale);
+  EDKLocalizations(this._lcl);
 
-  final Locale locale;
+  final Locale _lcl;
 
   static EDKLocalizations of(BuildContext context) {
     return Localizations.of<EDKLocalizations>(context, EDKLocalizations);
   }
 
-  static Map<String, Map<String, String>> _localizedValues = {
-    'pl': {
-      'edk': 'EDK',
-      'routes': 'Trasy',
-      'meditations': 'Rozważania',
-      'support': 'Wesprzyj',
-    },
-    'en': {
-      'edk': 'EDK',
-      'routes': 'Routes',
-      'meditations': 'Meditations',
-      'support': 'Support us',
-    },
-  };
-
-  String get edk {
-    return _localizedValues[locale.languageCode]['edk'];
-  }
-
-  String get routes {
-    return _localizedValues[locale.languageCode]['routes'];
-  }
-
-  String get meditations {
-    return _localizedValues[locale.languageCode]['meditations'];
-  }
-
-  String get support {
-    return _localizedValues[locale.languageCode]['support'];
-  }
+  String edk() => lv[_lcl.languageCode]['edk'];
+  String routes() => lv[_lcl.languageCode]['routes'];
+  String meditations() => lv[_lcl.languageCode]['meditations'];
+  String support() => lv[_lcl.languageCode]['support'];
+  String meditationsAvailable(int count) =>
+      lv[_lcl.languageCode]['meditationsAvailable']
+          .replaceFirst('%@', count.toString());
 }

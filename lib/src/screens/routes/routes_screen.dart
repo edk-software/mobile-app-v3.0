@@ -6,7 +6,7 @@ class RoutesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Center(
-        child: Text(EDKLocalizations.of(context).routes),
+        child: Text(EDKLocalizations.of(context).routes()),
       ),
     );
   }

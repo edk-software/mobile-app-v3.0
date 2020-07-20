@@ -1,3 +1,4 @@
+import 'package:edk_mobile_v3/src/i18n/localizations.dart';
 import 'package:edk_mobile_v3/src/screens/meditations/meditations_bloc.dart';
 import 'package:edk_mobile_v3/src/screens/meditations/widgets/meditations_list_tile_widget.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +58,8 @@ class MeditationsScreen extends StatelessWidget {
                 return Container();
               }
               return Text(
-                "${snapshot.data.length} dostępnych rozważań",
+                EDKLocalizations.of(context)
+                    .meditationsAvailable(snapshot.data.length),
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,

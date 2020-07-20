@@ -6,7 +6,7 @@ class SupportScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Center(
-        child: Text(EDKLocalizations.of(context).support),
+        child: Text(EDKLocalizations.of(context).support()),
       ),
     );
   }

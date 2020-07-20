@@ -71,13 +71,25 @@ class HomeState extends State<Home> {
         },
         items: [
           bottomNavigationBarItem(
-              0, "assets/images/edk.png", EDKLocalizations.of(context).edk),
+            0,
+            "assets/images/edk.png",
+            EDKLocalizations.of(context).edk(),
+          ),
           bottomNavigationBarItem(
-              1, "assets/images/map.png", EDKLocalizations.of(context).routes),
-          bottomNavigationBarItem(2, "assets/images/music_list.png",
-              EDKLocalizations.of(context).meditations),
-          bottomNavigationBarItem(3, "assets/images/support.png",
-              EDKLocalizations.of(context).support),
+            1,
+            "assets/images/map.png",
+            EDKLocalizations.of(context).routes(),
+          ),
+          bottomNavigationBarItem(
+            2,
+            "assets/images/music_list.png",
+            EDKLocalizations.of(context).meditations(),
+          ),
+          bottomNavigationBarItem(
+            3,
+            "assets/images/support.png",
+            EDKLocalizations.of(context).support(),
+          ),
         ],
       ),
     );
