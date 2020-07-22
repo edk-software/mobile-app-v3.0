@@ -3,7 +3,7 @@ import 'package:edk_mobile_v3/src/screens/edk/edk_screen.dart';
 import 'package:edk_mobile_v3/src/screens/meditations/meditations_screen.dart';
 import 'package:edk_mobile_v3/src/screens/routes/routes_screen.dart';
 import 'package:edk_mobile_v3/src/screens/support/support_screen.dart';
-import 'package:edk_mobile_v3/src/themes/base_theme.dart';
+import 'package:edk_mobile_v3/src/utils/edk_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -24,7 +24,6 @@ class MyApp extends StatelessWidget {
         const Locale('pl'),
         const Locale('en'),
       ],
-      theme: AppTheme.theme,
       home: Home(),
     );
   }
@@ -57,11 +56,12 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: EDKColor.shark,
       body: screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppTheme.bottomNavigationBarBackgroundColor,
-        selectedItemColor: AppTheme.bottomNavigationBarSelectedColor,
-        unselectedItemColor: AppTheme.bottomNavigationBarUnselectedColor,
+        backgroundColor: EDKColor.woodsmoke,
+        selectedItemColor: EDKColor.whisper,
+        unselectedItemColor: EDKColor.shuttleGray,
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
         onTap: (int index) {
@@ -100,9 +100,7 @@ class HomeState extends State<Home> {
     return BottomNavigationBarItem(
       icon: Image.asset(
         imagePath,
-        color: _currentIndex == index
-            ? AppTheme.bottomNavigationBarSelectedColor
-            : AppTheme.bottomNavigationBarUnselectedColor,
+        color: _currentIndex == index ? EDKColor.whisper : EDKColor.shuttleGray,
         colorBlendMode: BlendMode.srcIn,
       ),
       title: Text(text),
