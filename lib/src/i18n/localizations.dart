@@ -17,4 +17,9 @@ class EDKLocalizations {
   String meditationsAvailable(int count) =>
       lv[_lcl.languageCode]['meditationsAvailable']
           .replaceFirst('%@', count.toString());
+  String lifeWillNotLiveItself() =>
+      lv[_lcl.languageCode]['lifeWillNotLiveItself'];
+  String takeEDKChallenge() => lv[_lcl.languageCode]['takeEDKChallenge'];
+  String embarkOnTheJourney() => lv[_lcl.languageCode]['embarkOnTheJourney'];
+  String aboutEDK() => lv[_lcl.languageCode]['aboutEDK'];
 }

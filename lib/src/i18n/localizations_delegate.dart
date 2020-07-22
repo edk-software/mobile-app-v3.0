@@ -11,8 +11,6 @@ class EDKLocalizationsDelegate extends LocalizationsDelegate<EDKLocalizations> {
 
   @override
   Future<EDKLocalizations> load(Locale locale) {
-    // Returning a SynchronousFuture here because an async "load" operation
-    // isn't needed to produce an instance of DemoLocalizations.
     return SynchronousFuture<EDKLocalizations>(EDKLocalizations(locale));
   }
 

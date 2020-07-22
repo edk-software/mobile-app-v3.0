@@ -1,0 +1,1 @@
+const kFontFamilyOpenSans = 'Open Sans';
