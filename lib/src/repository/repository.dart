@@ -9,6 +9,16 @@ import '../providers/db_provider.dart';
 import '../providers/sp_provider.dart';
 
 class Repository {
+  Repository._privateConstructor();
+  static final Repository _instance = Repository._privateConstructor();
+  factory Repository() {
+    return _instance;
+  }
+
+  Future<bool> init() async {
+    return await _spProvider.init();
+  }
+
   final _dbProvider = DatabaseProvider();
   final _spProvider = SharedPreferencesProvider();
   final _apiProvider = ApiProvider();

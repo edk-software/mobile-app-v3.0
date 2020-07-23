@@ -55,44 +55,56 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: EDKColor.shark,
-      body: screens[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: EDKColor.woodsmoke,
-        selectedItemColor: EDKColor.whisper,
-        unselectedItemColor: EDKColor.shuttleGray,
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _currentIndex,
-        onTap: (int index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: [
-          bottomNavigationBarItem(
-            0,
-            "assets/images/edk.png",
-            EDKLocalizations.of(context).edk(),
-          ),
-          bottomNavigationBarItem(
-            1,
-            "assets/images/map.png",
-            EDKLocalizations.of(context).routes(),
-          ),
-          bottomNavigationBarItem(
-            2,
-            "assets/images/music_list.png",
-            EDKLocalizations.of(context).meditations(),
-          ),
-          bottomNavigationBarItem(
-            3,
-            "assets/images/support.png",
-            EDKLocalizations.of(context).support(),
-          ),
-        ],
-      ),
-    );
+    return FutureBuilder(
+        future: Repository().init(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Scaffold(
+              backgroundColor: EDKColor.shark,
+            );
+          }
+          return Scaffold(
+            backgroundColor: EDKColor.shark,
+            body: IndexedStack(
+              children: screens,
+              index: _currentIndex,
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              backgroundColor: EDKColor.woodsmoke,
+              selectedItemColor: EDKColor.whisper,
+              unselectedItemColor: EDKColor.shuttleGray,
+              type: BottomNavigationBarType.fixed,
+              currentIndex: _currentIndex,
+              onTap: (int index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              items: [
+                bottomNavigationBarItem(
+                  0,
+                  "assets/images/edk.png",
+                  EDKLocalizations.of(context).edk(),
+                ),
+                bottomNavigationBarItem(
+                  1,
+                  "assets/images/map.png",
+                  EDKLocalizations.of(context).routes(),
+                ),
+                bottomNavigationBarItem(
+                  2,
+                  "assets/images/music_list.png",
+                  EDKLocalizations.of(context).meditations(),
+                ),
+                bottomNavigationBarItem(
+                  3,
+                  "assets/images/support.png",
+                  EDKLocalizations.of(context).support(),
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   BottomNavigationBarItem bottomNavigationBarItem(

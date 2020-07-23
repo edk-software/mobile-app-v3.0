@@ -3,9 +3,7 @@ import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesProvider {
-  SharedPreferencesProvider._privateConstructor() {
-    init();
-  }
+  SharedPreferencesProvider._privateConstructor();
 
   static final SharedPreferencesProvider _instance =
       SharedPreferencesProvider._privateConstructor();
@@ -26,8 +24,9 @@ class SharedPreferencesProvider {
   final _currentMeditationsName = "sp_provider_currentMeditationsName";
   final _meditationsLastUpdate = "sp_provider_meditationsLastUpdate";
 
-  init() async {
+  Future<bool> init() async {
     _prefs = RxSharedPreferences(await SharedPreferences.getInstance());
+    return _prefs != null;
   }
 
   setEditionState(EditionState state) {
