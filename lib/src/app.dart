@@ -115,7 +115,7 @@ class HomeState extends State<Home> {
         color: _currentIndex == index ? EDKColor.whisper : EDKColor.shuttleGray,
         colorBlendMode: BlendMode.srcIn,
       ),
-      title: Text(text),
+      label: text,
     );
   }
 }
