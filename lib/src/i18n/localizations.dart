@@ -22,4 +22,8 @@ class EDKLocalizations {
   String takeEDKChallenge() => lv[_lcl.languageCode]['takeEDKChallenge'];
   String embarkOnTheJourney() => lv[_lcl.languageCode]['embarkOnTheJourney'];
   String aboutEDK() => lv[_lcl.languageCode]['aboutEDK'];
+  String whatIsIt() => lv[_lcl.languageCode]['whatIsIt'];
+  String challenges() => lv[_lcl.languageCode]['challenges'];
+  String opinions() => lv[_lcl.languageCode]['opinions'];
+  String organization() => lv[_lcl.languageCode]['organization'];
 }

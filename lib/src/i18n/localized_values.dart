@@ -9,7 +9,11 @@ final Map<String, Map<String, String>> lv = {
     'takeEDKChallenge': '''Podejmij wyzwanie
     Ekstremalnej Drogi Krzyżowej''',
     'embarkOnTheJourney': 'Wyrusz na edk',
-    'aboutEDK': 'O EDK'
+    'aboutEDK': 'O EDK',
+    'whatIsIt': 'Czym jest',
+    'challenges': 'Wyzwania',
+    'opinions': 'Opinie',
+    'organization': 'Organizacja'
   },
   'en': {
     'edk': 'EDK',
@@ -21,6 +25,10 @@ final Map<String, Map<String, String>> lv = {
     'takeEDKChallenge': '''Podejmij wyzwanie
     Ekstremalnej Drogi Krzyżowej''',
     'embarkOnTheJourney': 'Wyrusz na edk',
-    'aboutEDK': 'O EDK'
+    'aboutEDK': 'O EDK',
+    'whatIsIt': 'Czym jest',
+    'challenges': 'Wyzwania',
+    'opinions': 'Opinie',
+    'organization': 'Organizacja'
   },
 };
