@@ -24,7 +24,7 @@ class RoutesResponse {
     groupsCount = json['groupsCount'];
     countysCount = json['countysCount'];
     if (json['data'] != null) {
-      data = new List<Group>();
+      data = <Group>[];
       json['data'].forEach((v) {
         data.add(new Group.fromJson(v));
       });
@@ -57,7 +57,7 @@ class Group {
     groupId = json['groupId'];
     groupName = json['groupName'];
     if (json['areas'] != null) {
-      areas = new List<Area>();
+      areas = <Area>[];
       json['areas'].forEach((v) {
         areas.add(new Area.fromJson(v));
       });
@@ -86,7 +86,7 @@ class Area {
     areaId = json['areaId'];
     areaName = json['areaName'];
     if (json['routes'] != null) {
-      routes = new List<Route>();
+      routes = <Route>[];
       json['routes'].forEach((v) {
         routes.add(new Route.fromJson(v));
       });
@@ -164,7 +164,7 @@ class UserRoutesResponse {
 
   UserRoutesResponse.fromJson(Map<String, dynamic> json) {
     if (json['routes'] != null) {
-      routes = new List<UserRoute>();
+      routes = <UserRoute>[];
       json['routes'].forEach((v) {
         routes.add(new UserRoute.fromJson(v));
       });

@@ -25,7 +25,7 @@ class MeditationsScreen extends StatelessWidget {
   Widget topBar() {
     return Container(
       alignment: Alignment.centerRight,
-      child: FlatButton(
+      child: TextButton(
         onPressed: null,
         child: Image.asset("assets/images/settings.png"),
       ),

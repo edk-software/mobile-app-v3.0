@@ -69,8 +69,7 @@ class MeditationListTile extends StatelessWidget {
     return SizedBox(
       height: 64,
       width: 48,
-      child: FlatButton(
-        padding: EdgeInsets.zero,
+      child: TextButton(
         onPressed: () {},
         child: Image.asset(
           "assets/images/download.png",
@@ -83,8 +82,7 @@ class MeditationListTile extends StatelessWidget {
     return SizedBox(
       height: 64,
       width: 48,
-      child: FlatButton(
-        padding: EdgeInsets.zero,
+      child: TextButton(
         onPressed: () {},
         child: Image.asset(
           "assets/images/play.png",

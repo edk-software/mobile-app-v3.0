@@ -75,7 +75,7 @@ class Repository {
   final mapStationDataFromDb =
       StreamTransformer<List<StationDbData>, List<Station>>.fromHandlers(
           handleData: (stationDbData, sink) {
-    var stations = List<Station>();
+    var stations = <Station>[];
     stationDbData.forEach((element) {
       stations.add(Station.fromDbObject(element));
     });

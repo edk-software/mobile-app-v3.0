@@ -13,7 +13,7 @@ class Meditation {
     year = json['year'];
     type = json['type'];
     if (json['meditations'] != null) {
-      meditationLanguageVersions = new List<MeditationLanguageVersion>();
+      meditationLanguageVersions = <MeditationLanguageVersion>[];
       json['meditations'].forEach((v) {
         meditationLanguageVersions
             .add(new MeditationLanguageVersion.fromJson(v));

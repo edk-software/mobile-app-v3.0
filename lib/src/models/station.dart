@@ -9,7 +9,7 @@ class StationsResponse {
   StationsResponse.fromJson(Map<String, dynamic> json) {
     meditationId = json['meditationId'];
     if (json['stations'] != null) {
-      stations = new List<Station>();
+      stations = <Station>[];
       json['stations'].forEach((v) {
         stations.add(new Station.fromJson(v));
       });
